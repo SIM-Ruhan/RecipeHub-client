@@ -18,6 +18,15 @@ export const auth = betterAuth({
         clientId:process.env.CLIENT_ID ,
         clientSecret: process.env.CLIENT_SECRET
     }
-  
+  },
+  user: {
+    additionalFields:{
+      role: {
+        defaultValue: "attendee"
+      },
+      isBlocked: {
+        defaultValue: false
+      }
+    }
   }
 });

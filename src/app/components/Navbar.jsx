@@ -1,12 +1,54 @@
 "use client";
 
 import Link from 'next/link';
-import React, { useState } from 'react';
-import { BiRestaurant } from 'react-icons/bi'; // Logo Icon
-import { HiMenu, HiX } from 'react-icons/hi'; // Mobile Menu Icons
+import { usePathname, useRouter } from 'next/navigation';
+import React, { useState, useEffect, useRef } from 'react';
+import { BiRestaurant } from 'react-icons/bi';
+import { HiMenu, HiX } from 'react-icons/hi';
+import { authClient } from '@/lib/auth-client';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  
+  const pathname = usePathname();
+  const router = useRouter();
+  const dropdownRef = useRef(null);
+
+  // Better Auth session hook
+  const { data: session, isPending } = authClient.useSession();
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Logout Handler
+  const handleLogout = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/login");
+          router.refresh(); // Refresh to clear any cached protected data
+        }
+      }
+    });
+  };
+
+  // Helper function to check active path
+  const isActive = (path) => pathname === path;
+
+  // Active/Inactive class generator
+  const getLinkClasses = (path) => 
+    isActive(path)
+      ? "text-emerald-600 font-bold transition-colors duration-200"
+      : "text-gray-600 hover:text-emerald-600 font-medium transition-colors duration-200";
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -23,18 +65,68 @@ const Navbar = () => {
 
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="text-gray-600 hover:text-emerald-600 font-medium transition-colors duration-200">
+            <Link href="/" className={getLinkClasses("/")}>
               Home
             </Link>
-            <Link href="/browse" className="text-gray-600 hover:text-emerald-600 font-medium transition-colors duration-200">
+            <Link href="/browse" className={getLinkClasses("/browse")}>
               Browse Recipes
             </Link>
-            <Link href="/login" className="text-gray-600 hover:text-emerald-600 font-medium transition-colors duration-200">
-              Login
-            </Link>
-            <Link href="/registration" className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors duration-200 shadow-sm">
-              Register
-            </Link>
+
+            {/* Show Dashboard only if logged in */}
+            {session && (
+              <Link href="/dashboard" className={getLinkClasses("/dashboard")}>
+                Dashboard
+              </Link>
+            )}
+
+            {!isPending && !session ? (
+              // Unauthenticated State
+              <>
+                <Link href="/login" className={getLinkClasses("/login")}>
+                  Login
+                </Link>
+                <Link href="/registration" className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors duration-200 shadow-sm">
+                  Register
+                </Link>
+              </>
+            ) : session ? (
+              // Authenticated State (Dropdown)
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="flex items-center space-x-2 focus:outline-none"
+                >
+                  <img
+                    src={session.user.image || "https://ui-avatars.com/api/?name=" + session.user.name}
+                    alt={session.user.name}
+                    className="h-10 w-10 rounded-full object-cover border-2 border-emerald-500"
+                  />
+                </button>
+
+                {/* Dropdown Menu */}
+                {isDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 border border-gray-100 z-50 animate-fadeIn">
+                    <div className="px-4 py-3 border-b border-gray-100">
+                      <p className="text-sm text-gray-900 font-bold truncate">{session.user.name}</p>
+                      <p className="text-xs text-gray-500 truncate">{session.user.email}</p>
+                    </div>
+                    <Link
+                      href="/profile"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      Your Profile
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : null}
           </div>
 
           {/* Mobile Menu Button */}
@@ -57,34 +149,83 @@ const Navbar = () => {
           <div className="px-2 pt-2 pb-4 space-y-1 sm:px-3">
             <Link
               href="/"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
+              className={`block px-3 py-2 rounded-md text-base ${isActive('/') ? 'text-emerald-600 font-bold bg-emerald-50' : 'font-medium text-gray-700 hover:text-emerald-600 hover:bg-emerald-50'}`}
               onClick={() => setIsOpen(false)}
             >
               Home
             </Link>
             <Link
               href="/browse"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
+              className={`block px-3 py-2 rounded-md text-base ${isActive('/browse') ? 'text-emerald-600 font-bold bg-emerald-50' : 'font-medium text-gray-700 hover:text-emerald-600 hover:bg-emerald-50'}`}
               onClick={() => setIsOpen(false)}
             >
               Browse Recipes
             </Link>
-            <Link
-              href="/login"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              Login
-            </Link>
-            <div className="pt-2 px-3">
+
+            {session && (
               <Link
-                href="/registration"
-                className="block text-center bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors shadow-sm"
+                href="/dashboard"
+                className={`block px-3 py-2 rounded-md text-base ${isActive('/dashboard') ? 'text-emerald-600 font-bold bg-emerald-50' : 'font-medium text-gray-700 hover:text-emerald-600 hover:bg-emerald-50'}`}
                 onClick={() => setIsOpen(false)}
               >
-                Register
+                Dashboard
               </Link>
-            </div>
+            )}
+
+            {!isPending && !session ? (
+              <>
+                <Link
+                  href="/login"
+                  className={`block px-3 py-2 rounded-md text-base ${isActive('/login') ? 'text-emerald-600 font-bold bg-emerald-50' : 'font-medium text-gray-700 hover:text-emerald-600 hover:bg-emerald-50'}`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  Login
+                </Link>
+                <div className="pt-2 px-3">
+                  <Link
+                    href="/registration"
+                    className="block text-center bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors shadow-sm"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Register
+                  </Link>
+                </div>
+              </>
+            ) : session ? (
+              <div className="pt-4 pb-3 border-t border-gray-200">
+                <div className="flex items-center px-4 mb-3">
+                  <div className="shrink-0">
+                    <img
+                      className="h-10 w-10 rounded-full border-2 border-emerald-500"
+                      src={session.user.image || "https://ui-avatars.com/api/?name=" + session.user.name}
+                      alt={session.user.name}
+                    />
+                  </div>
+                  <div className="ml-3">
+                    <div className="text-base font-medium text-gray-800">{session.user.name}</div>
+                    <div className="text-sm font-medium text-gray-500">{session.user.email}</div>
+                  </div>
+                </div>
+                <div className="mt-3 space-y-1 px-2">
+                  <Link
+                    href="/profile"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-emerald-600 hover:bg-emerald-50"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Profile
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setIsOpen(false);
+                      handleLogout();
+                    }}
+                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
       )}
