@@ -1,4 +1,5 @@
-// "use client"
+"use client"
+import { usePathname } from 'next/navigation';
 import React from 'react';
 import { BiRestaurant } from 'react-icons/bi';
 import { FaFacebookF, FaTwitter, FaInstagram, FaPinterestP } from 'react-icons/fa';
@@ -8,6 +9,10 @@ import { HiOutlineMapPin } from "react-icons/hi2";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+   const pathname = usePathname();
+  if(pathname.includes("dashboard")){
+    return null;
+  }
 
   return (
     <footer className="bg-gray-900 text-gray-300 pt-16 pb-8">

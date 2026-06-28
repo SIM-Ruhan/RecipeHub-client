@@ -11,12 +11,14 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
-  const pathname = usePathname();
+
   const router = useRouter();
   const dropdownRef = useRef(null);
 
   // Better Auth session hook
   const { data: session, isPending } = authClient.useSession();
+const user = session?.user;
+ 
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -28,6 +30,11 @@ const Navbar = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+ const pathname = usePathname();
+  if(pathname.includes("dashboard")){
+    return null;
+  }
 
   // Logout Handler
   const handleLogout = async () => {
