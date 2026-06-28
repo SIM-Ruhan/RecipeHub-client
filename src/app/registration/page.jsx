@@ -147,11 +147,14 @@ const {
                             <select
                                 id="role"
                                 {...register("role", { required: "Role is required" })} className="w-full p-2 rounded-xl shadow">
-                                <option value="attendee">
-                                    Attendee
+                                <option value="user">
+                                    User
                                 </option>
-                                <option value="organizer">
-                                    Organizer
+                                <option value="seller">
+                                    Seller
+                                </option>
+                                <option value="admin">
+                                    Admin
                                 </option>
                             </select>
                             {

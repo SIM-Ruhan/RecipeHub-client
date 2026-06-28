@@ -81,7 +81,7 @@ const user = session?.user;
 
             {/* Show Dashboard only if logged in */}
             {session && (
-              <Link href="/dashboard" className={getLinkClasses("/dashboard")}>
+              <Link href={`/dashboard/${user?.role}`} className={getLinkClasses("/dashboard")}>
                 Dashboard
               </Link>
             )}
