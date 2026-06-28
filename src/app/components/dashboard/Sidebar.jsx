@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 
 // Icons (Adjust imports based on your actual installed icon libraries)
-import { BiRestaurant, BiMoney } from "react-icons/bi";
+import { BiRestaurant, BiMoney, BiStar, BiSave, BiPurchaseTag, BiPlus, BiMapAlt } from "react-icons/bi";
 import { TbAsset } from "react-icons/tb";
 import { ChartArea, User2 } from "lucide-react"; // Assuming these are from lucide-react
 import { HiOutlineMenu, HiOutlineX, HiOutlineLogout } from "react-icons/hi";
@@ -38,8 +38,11 @@ const Sidebar = () => {
   const dashboardItems = {
     seller: [
       { icon: ChartArea, label: "Overview", link: "/dashboard/seller" },
-      { icon: TbAsset, label: "Products", link: "/dashboard/seller/products" },
+      { icon: BiPlus, label: "Add recipe", link: "/dashboard/seller/add-recipe" },
+      { icon: BiStar, label: "Favourite", link: "/dashboard/seller/Favourite" },
+      { icon: BiPurchaseTag, label: "Purchased", link: "/dashboard/seller/Purchased" },
       { icon: BiMoney, label: "Transaction", link: "/dashboard/seller/transaction" },
+      { icon: BiMapAlt, label: "Profile", link: "/dashboard/seller/transaction" },
     ],
     buyer: [
       { icon: ChartArea, label: "Overview", link: "/dashboard/buyer" },

@@ -40,8 +40,12 @@ export default function AddRecipePage() {
       cuisine: formData.get("cuisine"),
       difficulty: formData.get("difficulty"),
       prepTime: Number(formData.get("prepTime")),
-      ingredients: ingredients.filter((item) => item.trim() !== " "),
-      instructions: instructions.filter((item) => item.trim() !== " "),
+      ingredients: ingredients.filter((item) => item.trim() !== ""),
+      instructions: instructions.filter((item) => item.trim() !== ""),
+
+        companyId: "company_001", // Replace with the actual company ID
+        status: "active",
+        isPubliclyVisible: true,
     };
 
     try {

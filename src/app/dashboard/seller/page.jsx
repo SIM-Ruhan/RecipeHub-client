@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { authClient } from "@/lib/auth-client";
 
 // Icons
 import { 
@@ -14,53 +14,115 @@ import {
   BiStar
 } from "react-icons/bi";
 import { HiOutlineArrowRight } from "react-icons/hi";
+import { getCompanyRecipe } from "@/lib/api";
+import ViewRecipeModal from "@/app/components/dashboard/viewModalofSeller";
+import EditRecipeModal from "@/app/components/dashboard/editModalofSeller";
+import DeleteRecipeModal from "@/app/components/dashboard/deleteModalofSeller";
+
+
 
 export default function SellerDashboardHomepage() {
-  // Fetch user session for dynamic greeting and premium status
   const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
-  if(isPending){
-    return <div>loading......</div>
-}
-  // In a real app, this would come from your MongoDB /payments and /recipes collections
-//   const isPremium = user?.isPremium || true; 
 
-  // Mock Data for UI visualization
-  const stats = [
-    { title: "Total Revenue", value: "$1,240.50", icon: BiMoney, color: "text-emerald-600", bg: "bg-emerald-100" },
-    { title: "Active Recipes", value: "24", icon: BiBookOpen, color: "text-blue-600", bg: "bg-blue-100" },
-    { title: "Total Favorites", value: "842", icon: BiHeart, color: "text-rose-600", bg: "bg-rose-100" },
-    { title: "Profile Views", value: "3.2k", icon: BiTrendingUp, color: "text-purple-600", bg: "bg-purple-100" },
-  ];
+  // ── State for dynamic recipes ─────────────────────────────────────────────
+  const [recipes, setRecipes]                 = useState([]);
+  const [isLoadingRecipes, setIsLoadingRecipes] = useState(true);
 
-  const recentTransactions = [
-    { id: "TRX-9821", recipe: "Spicy Thai Basil Chicken", buyer: "john@example.com", amount: "$4.99", date: "Today, 10:23 AM", status: "Completed" },
-    { id: "TRX-9820", recipe: "Classic Beef Wellington", buyer: "sarah.m@gmail.com", amount: "$9.99", date: "Yesterday, 2:15 PM", status: "Completed" },
-    { id: "TRX-9819", recipe: "Creamy Tuscan Pasta", buyer: "mike_chef@yahoo.com", amount: "$3.49", date: "Oct 24, 6:00 PM", status: "Completed" },
-    { id: "TRX-9818", recipe: "Vegan Chocolate Tart", buyer: "emma.w@outlook.com", amount: "$5.99", date: "Oct 23, 1:10 PM", status: "Pending" },
-  ];
+  // ── Modal state ───────────────────────────────────────────────────────────
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [modalType, setModalType]           = useState(null); // "view" | "edit" | "delete"
 
-  // Framer Motion Variants for staggered animations
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  const openModal  = (recipe, type) => { setSelectedRecipe(recipe); setModalType(type); };
+  const closeModal = ()             => { setSelectedRecipe(null);   setModalType(null); };
+
+  // ── Fetch recipes ─────────────────────────────────────────────────────────
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      if (user?.id) {
+        try {
+          setIsLoadingRecipes(true);
+          const data = await getCompanyRecipe({
+            companyId: "company_001",
+            status: "active",
+          });
+          setRecipes(data || []);
+        } catch (error) {
+          console.error("Failed to fetch recipes:", error);
+        } finally {
+          setIsLoadingRecipes(false);
+        }
+      }
+    };
+    fetchRecipes();
+  }, [user]);
+
+  // ── PATCH handler (called by EditRecipeModal) ────────────────────────────
+  // Replace the fetch URL with your real API endpoint.
+  const handleSaveRecipe = async (id, updatedFields) => {
+    const res = await fetch(`/api/recipes/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedFields),
+    });
+    if (!res.ok) throw new Error("Patch failed");
+
+    // Optimistic update in local state
+    setRecipes((prev) =>
+      prev.map((r) => (r._id === id ? { ...r, ...updatedFields } : r))
+    );
   };
 
+  // ── DELETE handler (called by DeleteRecipeModal) ─────────────────────────
+  const handleDeleteRecipe = async (id) => {
+    const res = await fetch(`/api/recipes/${id}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) throw new Error("Delete failed");
+
+    // Remove from local state
+    setRecipes((prev) => prev.filter((r) => r._id !== id));
+  };
+
+  // ── Stats ──────────────────────────────────────────────────────────────────
+  const stats = [
+    { title: "Active Recipes", value: recipes.length || "0", icon: BiBookOpen, color: "text-blue-600",   bg: "bg-blue-100" },
+    { title: "Total Favorites", value: "842",                icon: BiHeart,     color: "text-rose-600",  bg: "bg-rose-100" },
+    { title: "Total Engagement", value: "3.2k",              icon: BiTrendingUp,color: "text-purple-600",bg: "bg-purple-100" },
+  ];
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show:   { opacity: 1, transition: { staggerChildren: 0.1 } },
+  };
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    show: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 300, damping: 24 } }
+    show:   { y: 0, opacity: 1, transition: { type: "spring", stiffness: 300, damping: 24 } },
   };
 
   if (isPending) {
-    return <div className="p-8 flex justify-center items-center h-full"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div></div>;
+    return (
+      <div className="p-8 flex justify-center items-center h-full">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600" />
+      </div>
+    );
   }
 
   return (
     <div className="space-y-6">
-      
+
+      {/* ── Modals ──────────────────────────────────────────────────────────── */}
+      {modalType === "view" && (
+        <ViewRecipeModal recipe={selectedRecipe} onClose={closeModal} />
+      )}
+      {modalType === "edit" && (
+        <EditRecipeModal recipe={selectedRecipe} onClose={closeModal} onSave={handleSaveRecipe} />
+      )}
+      {modalType === "delete" && (
+        <DeleteRecipeModal recipe={selectedRecipe} onClose={closeModal} onDelete={handleDeleteRecipe} />
+      )}
+
       {/* 1. Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
         <div>
@@ -71,16 +133,8 @@ export default function SellerDashboardHomepage() {
             Here is what is happening with your recipes today.
           </p>
         </div>
-        
-        {/* Premium Badge & Quick Action */}
         <div className="flex items-center gap-3">
-          {/* {isPremium && (
-            <div className="flex items-center gap-1.5 bg-gradient-to-r from-amber-100 to-yellow-100 border border-yellow-200 text-yellow-800 px-3 py-1.5 rounded-full text-xs font-bold shadow-sm">
-              <BiStar className="text-yellow-600 h-4 w-4" />
-              Premium Creator
-            </div>
-          )} */}
-          <Link 
+          <Link
             href="/dashboard/seller/add-recipe"
             className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm"
           >
@@ -89,86 +143,133 @@ export default function SellerDashboardHomepage() {
         </div>
       </div>
 
-      {/* 2. Key Metrics Grid (Animated) */}
-      <motion.div 
-        variants={containerVariants} 
-        initial="hidden" 
-        animate="show" 
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+      {/* 2. Key Metrics Grid */}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="grid grid-cols-1 sm:grid-cols-3 gap-4"
       >
         {stats.map((stat, index) => (
-          <motion.variants key={index} variants={itemVariants}>
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
-              <div className={`p-4 rounded-xl ${stat.bg}`}>
-                <stat.icon className={`h-6 w-6 ${stat.color}`} />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-500">{stat.title}</p>
-                <h3 className="text-2xl font-bold text-gray-900 mt-1">{stat.value}</h3>
-              </div>
+          <motion.div
+            key={index}
+            variants={itemVariants}
+            className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow"
+          >
+            <div className={`p-4 rounded-xl ${stat.bg}`}>
+              <stat.icon className={`h-6 w-6 ${stat.color}`} />
             </div>
-          </motion.variants>
+            <div>
+              <p className="text-sm font-medium text-gray-500">{stat.title}</p>
+              <h3 className="text-2xl font-bold text-gray-900 mt-1">{stat.value}</h3>
+            </div>
+          </motion.div>
         ))}
       </motion.div>
 
-      {/* 3. Recent Transactions Table */}
-      <motion.div 
+      {/* 3. Dynamic Recipes Table */}
+      <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.4, duration: 0.5 }}
         className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
       >
         <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-          <h2 className="text-lg font-bold text-gray-900">Recent Sales</h2>
-          <Link href="/dashboard/seller/transaction" className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
+          <h2 className="text-lg font-bold text-gray-900">My Recent Recipes</h2>
+          <Link
+            href="/dashboard/seller/products"
+            className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
+          >
             View All <HiOutlineArrowRight />
           </Link>
         </div>
-        
+
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-white text-xs uppercase tracking-wider text-gray-500 border-b border-gray-100">
-                <th className="px-6 py-4 font-semibold">Transaction ID</th>
-                <th className="px-6 py-4 font-semibold">Recipe</th>
-                <th className="px-6 py-4 font-semibold">Buyer</th>
-                <th className="px-6 py-4 font-semibold">Date</th>
-                <th className="px-6 py-4 font-semibold text-right">Amount</th>
+                <th className="px-6 py-4 font-semibold">Recipe Name</th>
+                <th className="px-6 py-4 font-semibold">Category</th>
+                <th className="px-6 py-4 font-semibold">Difficulty</th>
+                <th className="px-6 py-4 font-semibold text-right">Likes</th>
                 <th className="px-6 py-4 font-semibold text-center">Status</th>
+                <th className="px-6 py-4 font-semibold text-center">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {recentTransactions.map((trx, index) => (
-                <tr key={index} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{trx.id}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{trx.recipe}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{trx.buyer}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{trx.date}</td>
-                  <td className="px-6 py-4 text-sm font-bold text-gray-900 text-right">{trx.amount}</td>
-                  <td className="px-6 py-4 text-center">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-                      trx.status === "Completed" 
-                        ? "bg-emerald-50 text-emerald-700 border-emerald-200" 
-                        : "bg-amber-50 text-amber-700 border-amber-200"
-                    }`}>
-                      {trx.status}
-                    </span>
+
+              {/* Loading */}
+              {isLoadingRecipes ? (
+                <tr>
+                  <td colSpan="6" className="px-6 py-8 text-center">
+                    <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-600" />
                   </td>
                 </tr>
-              ))}
+              ) : recipes.length > 0 ? (
+                recipes.slice(0, 5).map((recipe, index) => (
+                  <tr key={recipe._id || index} className="hover:bg-gray-50/50 transition-colors">
+                    <td className="px-6 py-4 text-sm font-bold text-gray-900">{recipe.title}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{recipe.category}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{recipe.difficulty}</td>
+                    <td className="px-6 py-4 text-sm font-bold text-gray-900 text-right">{recipe.likes || "00"}</td>
+                    <td className="px-6 py-4 text-center">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                        recipe.status === "active"
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                          : "bg-amber-50 text-amber-700 border-amber-200"
+                      }`}>
+                        {recipe.status || "Active"}
+                      </span>
+                    </td>
+
+                    {/* ── Action Buttons ── */}
+                    <td className="px-6 py-4 text-center">
+                      <div className="flex items-center justify-center gap-1.5">
+
+                        {/* View */}
+                        <button
+                          onClick={() => openModal(recipe, "view")}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition-colors"
+                          title="View recipe"
+                        >
+                          View
+                        </button>
+
+                        {/* Edit */}
+                        <button
+                          onClick={() => openModal(recipe, "edit")}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 transition-colors"
+                          title="Edit recipe"
+                        >
+                          Edit
+                        </button>
+
+                        {/* Delete */}
+                        <button
+                          onClick={() => openModal(recipe, "delete")}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition-colors"
+                          title="Delete recipe"
+                        >
+                          Delete
+                        </button>
+
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
+                    No recipes found yet. Keep sharing!
+                  </td>
+                </tr>
+              )}
+
             </tbody>
           </table>
-          
-          {/* Empty State Fallback (Optional, for when DB returns 0 transactions) */}
-          {recentTransactions.length === 0 && (
-            <div className="p-8 text-center text-gray-500">
-              No transactions found yet. Keep sharing recipes!
-            </div>
-          )}
         </div>
       </motion.div>
 
     </div>
   );
 }
-
