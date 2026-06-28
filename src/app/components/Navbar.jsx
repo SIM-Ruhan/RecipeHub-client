@@ -42,7 +42,7 @@ const user = session?.user;
       fetchOptions: {
         onSuccess: () => {
           router.push("/login");
-          router.refresh(); // Refresh to clear any cached protected data
+          router.refresh(); 
         }
       }
     });

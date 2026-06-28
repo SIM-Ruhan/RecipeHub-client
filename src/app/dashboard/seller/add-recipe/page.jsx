@@ -2,15 +2,19 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { BiTrash, BiSave } from "react-icons/bi";
+import { BiTrash, BiSave, BiLoaderAlt } from "react-icons/bi";
 import toast from "react-hot-toast";
 import { CreateRecipe } from "@/lib/actions/recipe";
-
-
+import { authClient } from "@/lib/auth-client"; // Importing session client
 
 export default function AddRecipePage() {
   const [ingredients, setIngredients] = useState([""]);
   const [instructions, setInstructions] = useState([""]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Get active session user
+  const { data: session } = authClient.useSession();
+  const user = session?.user;
 
   // Dynamic Input Handlers
   const addField = (setter, list) => setter([...list, ""]);
@@ -26,41 +30,86 @@ export default function AddRecipePage() {
     setter(newList);
   };
 
+  // ImgBB Upload Handler Function
+  const uploadToImgBB = async (file) => {
+    const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY; 
+    if (!apiKey) {
+      throw new Error("ImgBB API key is missing in your environment variables.");
+    }
+
+    const imgFormData = new FormData();
+    imgFormData.append("image", file);
+
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+      method: "POST",
+      body: imgFormData,
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      return result.data.url; // Returns the permanent hosted image URL string
+    } else {
+      throw new Error("ImgBB Upload Failed");
+    }
+  };
+
   // Submit Handler
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     const form = e.target;
     const formData = new FormData(form);
+    const imageFile = formData.get("imageFile");
 
-    const newRecipeData = {
-      title: formData.get("title"),
-      image: formData.get("image"),
-      category: formData.get("category"),
-      cuisine: formData.get("cuisine"),
-      difficulty: formData.get("difficulty"),
-      prepTime: Number(formData.get("prepTime")),
-      ingredients: ingredients.filter((item) => item.trim() !== ""),
-      instructions: instructions.filter((item) => item.trim() !== ""),
+    // Check if a file was selected
+    if (!imageFile || imageFile.size === 0) {
+      toast.error("Please select an image file to upload.");
+      setIsSubmitting(false);
+      return;
+    }
 
-        companyId: "company_001", // Replace with the actual company ID
-        status: "active",
-        isPubliclyVisible: true,
-    };
+    const toastId = toast.loading("Uploading recipe image...");
 
     try {
+      // 1. Upload file to ImgBB and get URL string
+      const hostedImageUrl = await uploadToImgBB(imageFile);
+
+      // 2. Prepare database payload structure
+      const newRecipeData = {
+        recipeName: formData.get("title"), // Matching database specifications
+        recipeImage: hostedImageUrl,      // Clean hosted URL string
+        category: formData.get("category"),
+        cuisineType: formData.get("cuisine"),
+        difficultyLevel: formData.get("difficulty"),
+        preparationTime: Number(formData.get("prepTime")),
+        ingredients: ingredients.filter((item) => item.trim() !== ""),
+        instructions: instructions.filter((item) => item.trim() !== ""),
+        authorId: user?.id || "anonymous",
+        authorName: user?.name || "Anonymous Chef",
+        authorEmail: user?.email || "",
+        likesCount: 0,
+        isFeatured: false,
+        status: "active",
+      };
+
+      // 3. Fire Server Action to MongoDB
+      toast.loading("Saving recipe...", { id: toastId });
       const res = await CreateRecipe(newRecipeData);
 
       if (res?.insertedId || res?.success) {
-        toast.success("Recipe submitted successfully!");
+        toast.success("Recipe published successfully!", { id: toastId });
         form.reset();
         setIngredients([""]);
         setInstructions([""]);
       } else {
-        toast.error("Failed to submit recipe.");
+        toast.error("Failed to submit recipe details.", { id: toastId });
       }
     } catch (error) {
       console.error(error);
+      toast.error(error.message || "An unexpected error occurred.", { id: toastId });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -85,21 +134,24 @@ export default function AddRecipePage() {
             <input
               name="title"
               required
-              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
+              disabled={isSubmitting}
+              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none disabled:bg-gray-50"
               placeholder="e.g. Spicy Thai Curry"
             />
           </div>
 
-          {/* Image */}
+          {/* File Upload instead of Input Text */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-gray-700">
-              Recipe Image URL
+              Recipe Image
             </label>
             <input
-              name="image"
+              type="file"
+              name="imageFile"
+              accept="image/*"
               required
-              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
-              placeholder="https://image-link.com"
+              disabled={isSubmitting}
+              className="w-full p-2 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none file:mr-4 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 disabled:opacity-50"
             />
           </div>
 
@@ -110,7 +162,8 @@ export default function AddRecipePage() {
             </label>
             <select
               name="category"
-              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
+              disabled={isSubmitting}
+              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none disabled:bg-gray-50"
             >
               <option value="Appetizer">Appetizer</option>
               <option value="Main Course">Main Course</option>
@@ -126,7 +179,8 @@ export default function AddRecipePage() {
             <input
               name="cuisine"
               required
-              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
+              disabled={isSubmitting}
+              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none disabled:bg-gray-50"
               placeholder="e.g. Italian"
             />
           </div>
@@ -138,7 +192,8 @@ export default function AddRecipePage() {
             </label>
             <select
               name="difficulty"
-              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
+              disabled={isSubmitting}
+              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none disabled:bg-gray-50"
             >
               <option value="Easy">Easy</option>
               <option value="Medium">Medium</option>
@@ -155,7 +210,8 @@ export default function AddRecipePage() {
               name="prepTime"
               type="number"
               required
-              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
+              disabled={isSubmitting}
+              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none disabled:bg-gray-50"
               placeholder="30"
             />
           </div>
@@ -171,24 +227,19 @@ export default function AddRecipePage() {
             <div key={index} className="flex gap-2">
               <input
                 value={ingredient}
+                disabled={isSubmitting}
                 onChange={(e) =>
-                  updateField(
-                    setIngredients,
-                    ingredients,
-                    index,
-                    e.target.value
-                  )
+                  updateField(setIngredients, ingredients, index, e.target.value)
                 }
-                className="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
+                className="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none disabled:bg-gray-50"
                 placeholder={`Ingredient ${index + 1}`}
               />
 
               <button
                 type="button"
-                onClick={() =>
-                  removeField(setIngredients, ingredients, index)
-                }
-                className="p-3 text-red-500 hover:bg-red-50 rounded-xl"
+                disabled={isSubmitting || ingredients.length === 1}
+                onClick={() => removeField(setIngredients, ingredients, index)}
+                className="p-3 text-red-500 hover:bg-red-50 rounded-xl disabled:opacity-30"
               >
                 <BiTrash />
               </button>
@@ -197,8 +248,9 @@ export default function AddRecipePage() {
 
           <button
             type="button"
+            disabled={isSubmitting}
             onClick={() => addField(setIngredients, ingredients)}
-            className="text-sm font-semibold text-emerald-600 hover:text-emerald-700"
+            className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 disabled:opacity-50"
           >
             + Add Ingredient
           </button>
@@ -215,24 +267,19 @@ export default function AddRecipePage() {
               <textarea
                 rows={2}
                 value={instruction}
+                disabled={isSubmitting}
                 onChange={(e) =>
-                  updateField(
-                    setInstructions,
-                    instructions,
-                    index,
-                    e.target.value
-                  )
+                  updateField(setInstructions, instructions, index, e.target.value)
                 }
-                className="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
+                className="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none disabled:bg-gray-50"
                 placeholder={`Step ${index + 1}`}
               />
 
               <button
                 type="button"
-                onClick={() =>
-                  removeField(setInstructions, instructions, index)
-                }
-                className="p-3 text-red-500 hover:bg-red-50 rounded-xl"
+                disabled={isSubmitting || instructions.length === 1}
+                onClick={() => removeField(setInstructions, instructions, index)}
+                className="p-3 text-red-500 hover:bg-red-50 rounded-xl disabled:opacity-30"
               >
                 <BiTrash />
               </button>
@@ -241,20 +288,26 @@ export default function AddRecipePage() {
 
           <button
             type="button"
+            disabled={isSubmitting}
             onClick={() => addField(setInstructions, instructions)}
-            className="text-sm font-semibold text-emerald-600 hover:text-emerald-700"
+            className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 disabled:opacity-50"
           >
             + Add Step
           </button>
         </div>
 
-        {/* Submit */}
+        {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all"
+          disabled={isSubmitting}
+          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all disabled:bg-emerald-400 disabled:cursor-not-allowed"
         >
-          <BiSave className="text-xl" />
-          Save Recipe
+          {isSubmitting ? (
+            <BiLoaderAlt className="text-xl animate-spin" />
+          ) : (
+            <BiSave className="text-xl" />
+          )}
+          {isSubmitting ? "Processing..." : "Save Recipe"}
         </button>
       </form>
     </motion.div>

@@ -7,11 +7,9 @@ import { motion } from "framer-motion";
 
 // Icons
 import { 
-  BiMoney, 
   BiHeart, 
   BiBookOpen, 
   BiTrendingUp,
-  BiStar
 } from "react-icons/bi";
 import { HiOutlineArrowRight } from "react-icons/hi";
 import { getCompanyRecipe } from "@/lib/api";
@@ -19,35 +17,33 @@ import ViewRecipeModal from "@/app/components/dashboard/viewModalofSeller";
 import EditRecipeModal from "@/app/components/dashboard/editModalofSeller";
 import DeleteRecipeModal from "@/app/components/dashboard/deleteModalofSeller";
 
-
-
 export default function SellerDashboardHomepage() {
   const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
 
-  // ── State for dynamic recipes ─────────────────────────────────────────────
-  const [recipes, setRecipes]                 = useState([]);
+  const [recipes, setRecipes] = useState([]);
   const [isLoadingRecipes, setIsLoadingRecipes] = useState(true);
 
-  // ── Modal state ───────────────────────────────────────────────────────────
   const [selectedRecipe, setSelectedRecipe] = useState(null);
-  const [modalType, setModalType]           = useState(null); // "view" | "edit" | "delete"
+  const [modalType, setModalType] = useState(null); // "view" | "edit" | "delete"
+  
+  const openModal = (recipe, type) => { setSelectedRecipe(recipe); setModalType(type); };
+  const closeModal = () => { setSelectedRecipe(null); setModalType(null); };
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
-  const openModal  = (recipe, type) => { setSelectedRecipe(recipe); setModalType(type); };
-  const closeModal = ()             => { setSelectedRecipe(null);   setModalType(null); };
-
-  // ── Fetch recipes ─────────────────────────────────────────────────────────
   useEffect(() => {
     const fetchRecipes = async () => {
+      // Ensure we only fetch if we have a valid user ID
       if (user?.id) {
         try {
           setIsLoadingRecipes(true);
+          // UPDATED: Use user.id to match the authorId in your database
           const data = await getCompanyRecipe({
-            companyId: "company_001",
+            authorId: user?.authorId, 
             status: "active",
           });
-          setRecipes(data || []);
+          
+          // Defensively ensure data is an array
+          setRecipes(Array.isArray(data) ? data : (data?.recipes || []));
         } catch (error) {
           console.error("Failed to fetch recipes:", error);
         } finally {
@@ -58,10 +54,11 @@ export default function SellerDashboardHomepage() {
     fetchRecipes();
   }, [user]);
 
-  // ── PATCH handler (called by EditRecipeModal) ────────────────────────────
-  // Replace the fetch URL with your real API endpoint.
   const handleSaveRecipe = async (id, updatedFields) => {
-    const res = await fetch(`/api/recipes/${id}`, {
+    // Standardize ID in case it comes back as an object from MongoDB
+    const targetId = typeof id === 'object' && id?.$oid ? id.$oid : id;
+    
+    const res = await fetch(`/api/recipes/${targetId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedFields),
@@ -70,22 +67,28 @@ export default function SellerDashboardHomepage() {
 
     // Optimistic update in local state
     setRecipes((prev) =>
-      prev.map((r) => (r._id === id ? { ...r, ...updatedFields } : r))
+      prev.map((r) => {
+        const rId = typeof r._id === 'object' ? r._id.$oid : r._id;
+        return rId === targetId ? { ...r, ...updatedFields } : r;
+      })
     );
   };
 
-  // ── DELETE handler (called by DeleteRecipeModal) ─────────────────────────
   const handleDeleteRecipe = async (id) => {
-    const res = await fetch(`/api/recipes/${id}`, {
+    const targetId = typeof id === 'object' && id?.$oid ? id.$oid : id;
+    
+    const res = await fetch(`/api/recipes/${targetId}`, {
       method: "DELETE",
     });
     if (!res.ok) throw new Error("Delete failed");
 
     // Remove from local state
-    setRecipes((prev) => prev.filter((r) => r._id !== id));
+    setRecipes((prev) => prev.filter((r) => {
+      const rId = typeof r._id === 'object' ? r._id.$oid : r._id;
+      return rId !== targetId;
+    }));
   };
 
-  // ── Stats ──────────────────────────────────────────────────────────────────
   const stats = [
     { title: "Active Recipes", value: recipes.length || "0", icon: BiBookOpen, color: "text-blue-600",   bg: "bg-blue-100" },
     { title: "Total Favorites", value: "842",                icon: BiHeart,     color: "text-rose-600",  bg: "bg-rose-100" },
@@ -112,7 +115,6 @@ export default function SellerDashboardHomepage() {
   return (
     <div className="space-y-6">
 
-      {/* ── Modals ──────────────────────────────────────────────────────────── */}
       {modalType === "view" && (
         <ViewRecipeModal recipe={selectedRecipe} onClose={closeModal} />
       )}
@@ -206,57 +208,56 @@ export default function SellerDashboardHomepage() {
                   </td>
                 </tr>
               ) : recipes.length > 0 ? (
-                recipes.slice(0, 5).map((recipe, index) => (
-                  <tr key={recipe._id || index} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4 text-sm font-bold text-gray-900">{recipe.title}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{recipe.category}</td>
-                    <td className="px-6 py-4 text-sm text-gray-500">{recipe.difficulty}</td>
-                    <td className="px-6 py-4 text-sm font-bold text-gray-900 text-right">{recipe.likes || "00"}</td>
-                    <td className="px-6 py-4 text-center">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-                        recipe.status === "active"
-                          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                          : "bg-amber-50 text-amber-700 border-amber-200"
-                      }`}>
-                        {recipe.status || "Active"}
-                      </span>
-                    </td>
+                recipes.slice(0, 5).map((recipe, index) => {
+                  // Standardize MongoDB object ID format safely
+                  const safeId = typeof recipe._id === 'object' && recipe._id?.$oid ? recipe._id.$oid : recipe._id;
+                  
+                  return (
+                    <tr key={safeId || index} className="hover:bg-gray-50/50 transition-colors">
+                      {/* UPDATED: Mapped to database fields */}
+                      <td className="px-6 py-4 text-sm font-bold text-gray-900">{recipe.recipeName || "Untitled"}</td>
+                      <td className="px-6 py-4 text-sm text-gray-600">{recipe.category || "Uncategorized"}</td>
+                      <td className="px-6 py-4 text-sm text-gray-500">{recipe.difficultyLevel || "N/A"}</td>
+                      <td className="px-6 py-4 text-sm font-bold text-gray-900 text-right">{recipe.likesCount || 0}</td>
+                      <td className="px-6 py-4 text-center">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                          recipe.status === "active"
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                            : "bg-amber-50 text-amber-700 border-amber-200"
+                        }`}>
+                          {recipe.status || "Active"}
+                        </span>
+                      </td>
 
-                    {/* ── Action Buttons ── */}
-                    <td className="px-6 py-4 text-center">
-                      <div className="flex items-center justify-center gap-1.5">
-
-                        {/* View */}
-                        <button
-                          onClick={() => openModal(recipe, "view")}
-                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition-colors"
-                          title="View recipe"
-                        >
-                          View
-                        </button>
-
-                        {/* Edit */}
-                        <button
-                          onClick={() => openModal(recipe, "edit")}
-                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 transition-colors"
-                          title="Edit recipe"
-                        >
-                          Edit
-                        </button>
-
-                        {/* Delete */}
-                        <button
-                          onClick={() => openModal(recipe, "delete")}
-                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition-colors"
-                          title="Delete recipe"
-                        >
-                          Delete
-                        </button>
-
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                      {/* ── Action Buttons ── */}
+                      <td className="px-6 py-4 text-center">
+                        <div className="flex items-center justify-center gap-1.5">
+                          <button
+                            onClick={() => openModal(recipe, "view")}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition-colors"
+                            title="View recipe"
+                          >
+                            View
+                          </button>
+                          <button
+                            onClick={() => openModal(recipe, "edit")}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 transition-colors"
+                            title="Edit recipe"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => openModal(recipe, "delete")}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition-colors"
+                            title="Delete recipe"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               ) : (
                 <tr>
                   <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
