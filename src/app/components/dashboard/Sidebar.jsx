@@ -44,9 +44,9 @@ const Sidebar = () => {
       { icon: BiMoney, label: "Transaction", link: "/dashboard/seller/transaction" },
       { icon: BiMapAlt, label: "Profile", link: "/dashboard/seller/transaction" },
     ],
-    buyer: [
-      { icon: ChartArea, label: "Overview", link: "/dashboard/buyer" },
-      { icon: TbAsset, label: "Products", link: "/dashboard/buyer/products" },
+    user: [
+      { icon: ChartArea, label: "Overview", link: "/dashboard/user" },
+      { icon: TbAsset, label: "Products", link: "/dashboard/user/totalRecipe" },
       { icon: BiMoney, label: "Transaction", link: "/dashboard/buyer/transaction" },
     ],
     admin: [
