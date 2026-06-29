@@ -10,7 +10,7 @@ const pricingTiers = [
     id: "seller_starter",
     price: "1",
     description: "Perfect for hobbyist home cooks.",
-    features: ["Up to 5 recipe listings", "Basic search visibility", "Community support", "Standard profile"],
+    features: ["Up to 10 recipe listings", "Basic search visibility", "Community support", "Standard profile"],
     buttonText: "Your Current Plan",
     featured: false,
   },

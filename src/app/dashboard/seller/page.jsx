@@ -36,9 +36,9 @@ export default function SellerDashboardHomepage() {
       if (user?.id) {
         try {
           setIsLoadingRecipes(true);
-          // UPDATED: Use user.id to match the authorId in your database
+          // FIXED: Changed user?.authorId to user?.id to fetch correctly
           const data = await getCompanyRecipe({
-            authorId: user?.authorId, 
+            authorId: user?.id, 
             status: "active",
           });
           
@@ -209,12 +209,10 @@ export default function SellerDashboardHomepage() {
                 </tr>
               ) : recipes.length > 0 ? (
                 recipes.slice(0, 5).map((recipe, index) => {
-                  // Standardize MongoDB object ID format safely
                   const safeId = typeof recipe._id === 'object' && recipe._id?.$oid ? recipe._id.$oid : recipe._id;
                   
                   return (
                     <tr key={safeId || index} className="hover:bg-gray-50/50 transition-colors">
-                      {/* UPDATED: Mapped to database fields */}
                       <td className="px-6 py-4 text-sm font-bold text-gray-900">{recipe.recipeName || "Untitled"}</td>
                       <td className="px-6 py-4 text-sm text-gray-600">{recipe.category || "Uncategorized"}</td>
                       <td className="px-6 py-4 text-sm text-gray-500">{recipe.difficultyLevel || "N/A"}</td>
@@ -229,7 +227,7 @@ export default function SellerDashboardHomepage() {
                         </span>
                       </td>
 
-                      {/* ── Action Buttons ── */}
+                      {/* Action Buttons */}
                       <td className="px-6 py-4 text-center">
                         <div className="flex items-center justify-center gap-1.5">
                           <button

@@ -39,13 +39,14 @@ const {
     const password = e.target.password.value;
      const image = e.target.image.value;
     const role = e.target.role.value;
+
     try {
       const result = await authClient.signUp.email({
         name,
         email,
         password,
         image,
-        role
+        role,
       });
 
       console.log("Signup Result:", result);
