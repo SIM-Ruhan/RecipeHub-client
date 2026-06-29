@@ -16,3 +16,4 @@ export const getCompanyRecipe = async({authorId, status = "active"}) => {
 const res = await fetch(`${baseURL}/api/recipes?authorId=${authorId}&status=${status}`)
 return res.json();
 }
+

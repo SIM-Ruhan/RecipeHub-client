@@ -14,12 +14,14 @@ import {
 } from "@heroui/react";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 
 export default function LogInPage() {
   const router = useRouter();
 
+const searchParams = useSearchParams();
+const redirectTo = searchParams.get("redirect") || "/";
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -36,7 +38,6 @@ export default function LogInPage() {
       toast.error("Log In failed");
       return;
     }
-
     toast.success("Log In successful!");
     router.push("/");
   };
@@ -135,7 +136,7 @@ export default function LogInPage() {
 
         <p className="text-center text-sm">
           Don’t have an account?{" "}
-          <Link href="/register" className="text-blue-600 btn">
+          <Link href={`/auth/registration?redirect=${redirectTo}`} className="text-blue-600 btn">
             Register here
           </Link>
         </p>

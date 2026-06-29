@@ -79,18 +79,15 @@ export default function RecipeCard({ recipe }) {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-4 border-t border-gray-50">
-          <div className="text-lg font-extrabold text-emerald-600">
-            {price === 0 ? "Free" : `$${price.toFixed(2)}`}
-          </div>
+        
           <Link 
             href={`/browse/${_id}`}
-            className="bg-emerald-600 border text-white hover:bg-emerald-50 hover:text-black px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+            className="bg-emerald-600 text-center hover:bg-emerald-800 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
           >
             View Recipe
           </Link>
         </div>
       </div>
-    </div>
+    
   );
 }

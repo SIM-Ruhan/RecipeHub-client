@@ -19,7 +19,15 @@ import { getRecipeId } from '@/lib/api';
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { BiTime, BiStar, BiChevronLeft, BiHeart } from 'react-icons/bi';
+import { 
+    BiTime, 
+    BiStar, 
+    BiChevronLeft, 
+    BiHeart, 
+    BiBookmark, 
+    BiFlag,
+    BiCreditCard
+} from 'react-icons/bi';
 import { TbChefHat } from 'react-icons/tb';
 import { notFound } from 'next/navigation';
 
@@ -27,12 +35,10 @@ const RecipeDetailsPage = async ({ params }) => {
     const { id } = await params;
     const recipe = await getRecipeId(id);
 
-    // If no recipe is found, return the Next.js 404 page
     if (!recipe) {
         notFound();
     }
 
-    // Map your MongoDB fields
     const {
         recipeName,
         recipeImage,
@@ -42,7 +48,8 @@ const RecipeDetailsPage = async ({ params }) => {
         ingredients = [],
         instructions = [],
         authorName,
-        likesCount
+        likesCount,
+        price = "00",
     } = recipe;
 
     return (
@@ -51,7 +58,7 @@ const RecipeDetailsPage = async ({ params }) => {
                 
                 {/* Back Button */}
                 <div className="p-6">
-                    <Link href="/browse" className="inline-flex items-center text-gray-500 hover:text-emerald-600 font-medium">
+                    <Link href="/browse" className="inline-flex items-center text-gray-500 hover:text-emerald-600 font-medium transition-colors">
                         <BiChevronLeft className="text-xl" /> Back to Browse
                     </Link>
                 </div>
@@ -67,18 +74,50 @@ const RecipeDetailsPage = async ({ params }) => {
                     />
                 </div>
 
-                {/* Header Content */}
+                {/* Header & Action Panel */}
                 <div className="p-8 md:p-12">
-                    <div className="flex justify-between items-start mb-4">
-                        <span className="bg-emerald-100 text-emerald-700 px-4 py-1 rounded-full text-sm font-bold">
-                            {category}
-                        </span>
-                        <div className="flex items-center gap-2 text-rose-600 font-bold">
-                            <BiHeart /> {likesCount || 0}
+                    
+                    <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-8">
+                        {/* Title and Category */}
+                        <div className="flex-1">
+                            <span className="bg-emerald-100 text-emerald-700 px-4 py-1 rounded-full text-sm font-bold inline-block mb-4">
+                                {category}
+                            </span>
+                            <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+                                {recipeName}
+                            </h1>
+                        </div>
+
+                        {/* Interactive Action Panel */}
+                        {/* Note: When implementing functionality, wrap this block in a Client Component */}
+                        <div className="w-full md:w-auto flex flex-col gap-3 min-w-[240px] bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                            
+                            {/* Purchase Button */}
+                            <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl shadow-sm flex items-center justify-center gap-2 transition-all">
+                                <BiCreditCard className="text-xl" /> Buy Recipe - ${price}
+                            </button>
+                            
+                            <div className="flex items-center justify-between gap-2">
+                                {/* Like Button */}
+                                <button className="flex-1 flex items-center justify-center gap-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 py-2.5 rounded-xl font-semibold transition-colors">
+                                    <BiHeart className="text-lg" /> {likesCount || 0}
+                                </button>
+                                
+                                {/* Favorite Button */}
+                                <button className="flex-1 flex items-center justify-center gap-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 py-2.5 rounded-xl font-semibold transition-colors">
+                                    <BiBookmark className="text-lg" /> Save
+                                </button>
+                                
+                                {/* Report Button */}
+                                <button 
+                                    className="flex items-center justify-center bg-gray-200 text-gray-500 hover:bg-red-100 hover:text-red-600 p-3 rounded-xl transition-colors"
+                                    title="Report this recipe"
+                                >
+                                    <BiFlag className="text-lg" />
+                                </button>
+                            </div>
                         </div>
                     </div>
-
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">{recipeName}</h1>
 
                     {/* Metadata */}
                     <div className="flex flex-wrap gap-6 text-gray-600 mb-8 pb-8 border-b border-gray-100">
@@ -94,7 +133,7 @@ const RecipeDetailsPage = async ({ params }) => {
                             <ul className="space-y-3">
                                 {ingredients.map((ing, i) => (
                                     <li key={i} className="flex items-start gap-3 text-gray-700">
-                                        <span className="w-2 h-2 mt-2 rounded-full bg-emerald-500" />
+                                        <span className="w-2 h-2 mt-2 rounded-full bg-emerald-500 shrink-0" />
                                         {ing}
                                     </li>
                                 ))}

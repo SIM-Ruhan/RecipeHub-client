@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 import { HiOutlineArrowLongRight } from 'react-icons/hi2';
 
@@ -30,20 +31,20 @@ const HeroBanner = () => {
 
             {/* CTA Button */}
             <div className="pt-4 flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
-              <a
-                href="#browse"
+              <Link
+                href="/browse"
                 className="group inline-flex items-center justify-center px-6 py-3.5 border border-transparent text-base font-semibold rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 shadow-md hover:shadow-lg transition-all duration-200 gap-2"
               >
                 Explore Recipes
                 <HiOutlineArrowLongRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </a>
+              </Link>
               
-              <a
-                href="#register"
+              <Link
+                href="/registration"
                 className="inline-flex items-center justify-center px-6 py-3.5 border border-gray-300 text-base font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200 shadow-sm"
               >
                 Join Community
-              </a>
+              </Link>
             </div>
           </div>
 

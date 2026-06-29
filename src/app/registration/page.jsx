@@ -15,13 +15,16 @@ import {
   Label,
   TextField,
 } from "@heroui/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 
 
 export default function SignUpPage() {
   const router = useRouter();
+const searchParams = useSearchParams();
+const redirectTo = searchParams.get("redirect") || "/";
+
 const {
   register,
   handleSubmit,
@@ -191,7 +194,7 @@ const {
 
         <p className="text-center text-sm mt-2">
           Already registered?{" "}
-          <Link href="/login" className="text-blue-500 btn">
+          <Link href={`/auth/login?redirect=${redirectTo}`} className="text-blue-500 btn">
             Login here
           </Link>
         </p>

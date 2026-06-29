@@ -83,6 +83,7 @@ export default function AddRecipePage() {
         cuisineType: formData.get("cuisine"),
         difficultyLevel: formData.get("difficulty"),
         preparationTime: Number(formData.get("prepTime")),
+        price: Number(formData.get("price")),
         ingredients: ingredients.filter((item) => item.trim() !== ""),
         instructions: instructions.filter((item) => item.trim() !== ""),
         authorId: user?.id || "anonymous",
@@ -185,7 +186,10 @@ export default function AddRecipePage() {
             />
           </div>
 
-          {/* Difficulty */}
+         
+        </div>
+         {/* Difficulty */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2">
             <label className="text-sm font-semibold text-gray-700">
               Difficulty
@@ -202,6 +206,7 @@ export default function AddRecipePage() {
           </div>
 
           {/* Prep Time */}
+          
           <div className="space-y-2">
             <label className="text-sm font-semibold text-gray-700">
               Prep Time (mins)
@@ -215,7 +220,21 @@ export default function AddRecipePage() {
               placeholder="30"
             />
           </div>
-        </div>
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-gray-700">
+              Price($)
+            </label>
+            <input
+              name="price"
+              type="number"
+              step="0.01"
+              required
+              disabled={isSubmitting}
+              className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none disabled:bg-gray-50"
+              placeholder="4.99$"
+            />
+          </div>
+          </div>
 
         {/* Ingredients */}
         <div className="space-y-3">
