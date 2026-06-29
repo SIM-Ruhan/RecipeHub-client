@@ -20,3 +20,4 @@ export const CreateRecipe = async (newRecipeData) => {
 
   return data;
 };
+

@@ -5,14 +5,15 @@ import { motion } from "framer-motion";
 import { BiTrash, BiSave, BiLoaderAlt } from "react-icons/bi";
 import toast from "react-hot-toast";
 import { CreateRecipe } from "@/lib/actions/recipe";
-import { authClient } from "@/lib/auth-client"; // Importing session client
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 export default function AddRecipePage() {
   const [ingredients, setIngredients] = useState([""]);
   const [instructions, setInstructions] = useState([""]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Get active session user
+  const router = useRouter();
   const { data: session } = authClient.useSession();
   const user = session?.user;
 
@@ -30,12 +31,10 @@ export default function AddRecipePage() {
     setter(newList);
   };
 
-  // ImgBB Upload Handler Function
+  // ImgBB Upload
   const uploadToImgBB = async (file) => {
-    const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY; 
-    if (!apiKey) {
-      throw new Error("ImgBB API key is missing in your environment variables.");
-    }
+    const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
+    if (!apiKey) throw new Error("ImgBB API key is missing.");
 
     const imgFormData = new FormData();
     imgFormData.append("image", file);
@@ -46,11 +45,8 @@ export default function AddRecipePage() {
     });
 
     const result = await response.json();
-    if (result.success) {
-      return result.data.url; // Returns the permanent hosted image URL string
-    } else {
-      throw new Error("ImgBB Upload Failed");
-    }
+    if (result.success) return result.data.url;
+    throw new Error("ImgBB Upload Failed");
   };
 
   // Submit Handler
@@ -62,7 +58,6 @@ export default function AddRecipePage() {
     const formData = new FormData(form);
     const imageFile = formData.get("imageFile");
 
-    // Check if a file was selected
     if (!imageFile || imageFile.size === 0) {
       toast.error("Please select an image file to upload.");
       setIsSubmitting(false);
@@ -72,13 +67,13 @@ export default function AddRecipePage() {
     const toastId = toast.loading("Uploading recipe image...");
 
     try {
-      // 1. Upload file to ImgBB and get URL string
+      // 1. Upload image to ImgBB
       const hostedImageUrl = await uploadToImgBB(imageFile);
 
-      // 2. Prepare database payload structure
+      // 2. Build payload — NO hardcoded plan here, plan lives on the user in DB
       const newRecipeData = {
-        recipeName: formData.get("title"), // Matching database specifications
-        recipeImage: hostedImageUrl,      // Clean hosted URL string
+        recipeName: formData.get("title"),
+        recipeImage: hostedImageUrl,
         category: formData.get("category"),
         cuisineType: formData.get("cuisine"),
         difficultyLevel: formData.get("difficulty"),
@@ -88,13 +83,14 @@ export default function AddRecipePage() {
         instructions: instructions.filter((item) => item.trim() !== ""),
         authorId: user?.id || "anonymous",
         authorName: user?.name || "Anonymous Chef",
-        authorEmail: user?.email || "",
+        authorEmail: user?.email || "example@gmail.com",
         likesCount: 0,
         isFeatured: false,
         status: "active",
+        userPlan: user?.plan || "free",
       };
 
-      // 3. Fire Server Action to MongoDB
+      // 3. Save to DB — the API will enforce the plan limit
       toast.loading("Saving recipe...", { id: toastId });
       const res = await CreateRecipe(newRecipeData);
 
@@ -104,11 +100,22 @@ export default function AddRecipePage() {
         setIngredients([""]);
         setInstructions([""]);
       } else {
-        toast.error("Failed to submit recipe details.", { id: toastId });
+        toast.error("Failed to submit recipe.", { id: toastId });
       }
+
     } catch (error) {
       console.error(error);
-      toast.error(error.message || "An unexpected error occurred.", { id: toastId });
+
+      // ✅ If API returned a 403 plan-limit error, redirect to /pricing
+      if (error.message === "LIMIT_REACHED") {
+        toast.error("Recipe limit reached! Purchase a plan...", {
+          id: toastId,
+          duration: 3000,
+        });
+        setTimeout(() => router.push("/pricing"), 1500);
+      } else {
+        toast.error(error.message || "An unexpected error occurred.", { id: toastId });
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -120,18 +127,12 @@ export default function AddRecipePage() {
       animate={{ opacity: 1, y: 0 }}
       className="max-w-4xl mx-auto bg-white p-8 rounded-2xl border border-gray-100 shadow-sm"
     >
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">
-        Create New Recipe
-      </h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Create New Recipe</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Basic Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Recipe Name */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">
-              Recipe Name
-            </label>
+            <label className="text-sm font-semibold text-gray-700">Recipe Name</label>
             <input
               name="title"
               required
@@ -141,11 +142,8 @@ export default function AddRecipePage() {
             />
           </div>
 
-          {/* File Upload instead of Input Text */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">
-              Recipe Image
-            </label>
+            <label className="text-sm font-semibold text-gray-700">Recipe Image</label>
             <input
               type="file"
               name="imageFile"
@@ -156,11 +154,8 @@ export default function AddRecipePage() {
             />
           </div>
 
-          {/* Category */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">
-              Category
-            </label>
+            <label className="text-sm font-semibold text-gray-700">Category</label>
             <select
               name="category"
               disabled={isSubmitting}
@@ -172,11 +167,8 @@ export default function AddRecipePage() {
             </select>
           </div>
 
-          {/* Cuisine */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">
-              Cuisine Type
-            </label>
+            <label className="text-sm font-semibold text-gray-700">Cuisine Type</label>
             <input
               name="cuisine"
               required
@@ -185,15 +177,11 @@ export default function AddRecipePage() {
               placeholder="e.g. Italian"
             />
           </div>
-
-         
         </div>
-         {/* Difficulty */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">
-              Difficulty
-            </label>
+            <label className="text-sm font-semibold text-gray-700">Difficulty</label>
             <select
               name="difficulty"
               disabled={isSubmitting}
@@ -205,12 +193,8 @@ export default function AddRecipePage() {
             </select>
           </div>
 
-          {/* Prep Time */}
-          
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">
-              Prep Time (mins)
-            </label>
+            <label className="text-sm font-semibold text-gray-700">Prep Time (mins)</label>
             <input
               name="prepTime"
               type="number"
@@ -220,10 +204,9 @@ export default function AddRecipePage() {
               placeholder="30"
             />
           </div>
+
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">
-              Price($)
-            </label>
+            <label className="text-sm font-semibold text-gray-700">Price ($)</label>
             <input
               name="price"
               type="number"
@@ -231,29 +214,23 @@ export default function AddRecipePage() {
               required
               disabled={isSubmitting}
               className="w-full p-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none disabled:bg-gray-50"
-              placeholder="4.99$"
+              placeholder="4.99"
             />
           </div>
-          </div>
+        </div>
 
         {/* Ingredients */}
         <div className="space-y-3">
-          <label className="text-sm font-semibold text-gray-700">
-            Ingredients
-          </label>
-
+          <label className="text-sm font-semibold text-gray-700">Ingredients</label>
           {ingredients.map((ingredient, index) => (
             <div key={index} className="flex gap-2">
               <input
                 value={ingredient}
                 disabled={isSubmitting}
-                onChange={(e) =>
-                  updateField(setIngredients, ingredients, index, e.target.value)
-                }
+                onChange={(e) => updateField(setIngredients, ingredients, index, e.target.value)}
                 className="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none disabled:bg-gray-50"
                 placeholder={`Ingredient ${index + 1}`}
               />
-
               <button
                 type="button"
                 disabled={isSubmitting || ingredients.length === 1}
@@ -264,7 +241,6 @@ export default function AddRecipePage() {
               </button>
             </div>
           ))}
-
           <button
             type="button"
             disabled={isSubmitting}
@@ -277,23 +253,17 @@ export default function AddRecipePage() {
 
         {/* Instructions */}
         <div className="space-y-3">
-          <label className="text-sm font-semibold text-gray-700">
-            Instructions
-          </label>
-
+          <label className="text-sm font-semibold text-gray-700">Instructions</label>
           {instructions.map((instruction, index) => (
             <div key={index} className="flex gap-2">
               <textarea
                 rows={2}
                 value={instruction}
                 disabled={isSubmitting}
-                onChange={(e) =>
-                  updateField(setInstructions, instructions, index, e.target.value)
-                }
+                onChange={(e) => updateField(setInstructions, instructions, index, e.target.value)}
                 className="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none disabled:bg-gray-50"
                 placeholder={`Step ${index + 1}`}
               />
-
               <button
                 type="button"
                 disabled={isSubmitting || instructions.length === 1}
@@ -304,7 +274,6 @@ export default function AddRecipePage() {
               </button>
             </div>
           ))}
-
           <button
             type="button"
             disabled={isSubmitting}
@@ -315,17 +284,12 @@ export default function AddRecipePage() {
           </button>
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={isSubmitting}
           className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all disabled:bg-emerald-400 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? (
-            <BiLoaderAlt className="text-xl animate-spin" />
-          ) : (
-            <BiSave className="text-xl" />
-          )}
+          {isSubmitting ? <BiLoaderAlt className="text-xl animate-spin" /> : <BiSave className="text-xl" />}
           {isSubmitting ? "Processing..." : "Save Recipe"}
         </button>
       </form>
