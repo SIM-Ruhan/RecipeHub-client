@@ -1,4 +1,5 @@
 import { metadata } from '@/app/layout'
+import { createSubscription } from '@/lib/actions/subscriptions'
 import { stripe } from '@/lib/stripe'
 import { redirect } from 'next/navigation'
 
@@ -11,7 +12,8 @@ export default async function Success({ searchParams }) {
 
   const {
     status ,
-    customer_details: { email: customerEmail }
+    customer_details: { email: customerEmail },
+    metadata
   } = await stripe.checkout.sessions.retrieve(session_id, {
     expand: ['line_items', 'payment_intent']
   })
@@ -23,8 +25,11 @@ export default async function Success({ searchParams }) {
   if (status === 'complete') {
     const subsInfo = {
         email : customerEmail,
-        planId : metadata.planId
+        planId : metadata?.planId
     }
+
+    const result = await createSubscription(subsInfo);
+    console.log(result)
     return (
       <section id="success">
         <p>

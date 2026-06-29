@@ -87,7 +87,6 @@ export default function AddRecipePage() {
         likesCount: 0,
         isFeatured: false,
         status: "active",
-        userPlan: user?.plan || "free",
       };
 
       // 3. Save to DB — the API will enforce the plan limit

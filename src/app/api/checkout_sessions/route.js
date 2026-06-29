@@ -25,6 +25,7 @@ export async function POST(request) {
       ],
       mode: 'subscription',
       success_url: `${origin}/pricing/success?session_id={CHECKOUT_SESSION_ID}`,
+        metadata: { planId },
     });
     return NextResponse.redirect(session.url, 303)
   } catch (err) {
@@ -34,3 +35,4 @@ export async function POST(request) {
     )
   }
 }
+

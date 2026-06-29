@@ -8,12 +8,35 @@ export const serverFetch = async (path) => {
     return await res.json();
 }
 
-export const serverMutation = async (path,data) => {
-    const res = await fetch(`${baseURL}${path}`,{
+// export const serverMutation = async (path,data) => {
+//     const res = await fetch(`${baseURL}${path}`,{
+//         method: "POST",
+//         headers : {
+//             "Content-Type" : "application/json",
+//         },
+//         body : JSON.stringify(data),
+//     })
+// }
+
+
+
+export const serverMutation = async (path, data) => {
+    const res = await fetch(`${baseURL}${path}`, {
         method: "POST",
-        headers : {
-            "Content-Type" : "application/json",
+        headers: {
+            "Content-Type": "application/json",
         },
-        body : JSON.stringify(data),
-    })
+        body: JSON.stringify(data),
+    });
+
+    // 1. Get the response data
+    const result = await res.json();
+
+    // 2. Check if the response was successful (status 200-299)
+    if (!res.ok) {
+        throw new Error(result.message || "Mutation failed");
+    }
+
+    // 3. IMPORTANT: Return the data so the caller can use it
+    return result;
 }

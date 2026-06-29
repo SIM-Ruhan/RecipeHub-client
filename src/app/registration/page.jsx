@@ -39,6 +39,7 @@ const {
     const password = e.target.password.value;
      const image = e.target.image.value;
     const role = e.target.role.value;
+    const plan = "free";
 
     try {
       const result = await authClient.signUp.email({
@@ -47,6 +48,7 @@ const {
         password,
         image,
         role,
+        plan,
       });
 
       console.log("Signup Result:", result);
