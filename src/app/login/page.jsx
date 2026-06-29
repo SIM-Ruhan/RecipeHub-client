@@ -1,4 +1,6 @@
 "use client";
+
+import { Suspense } from "react";
 import { authClient } from "@/lib/auth-client"; 
 import { Checkbox } from "@heroui/react";
 import { GrGoogle } from "react-icons/gr";
@@ -17,11 +19,10 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 
-export default function LogInPage() {
+function LogInForm() {
   const router = useRouter();
-
-const searchParams = useSearchParams();
-const redirectTo = searchParams.get("redirect") || "/";
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/";
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -39,30 +40,30 @@ const redirectTo = searchParams.get("redirect") || "/";
       return;
     }
     toast.success("Log In successful!");
-    router.push("/");
+    router.push(redirectTo);
   };
 
-   const handleGoogleLogin = async () => {
-  try {
-    const { data, error } = await authClient.signIn.social({
-      provider: "google",
-      callbackURL: "/",
-    });
+  const handleGoogleLogin = async () => {
+    try {
+      const { data, error } = await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/",
+      });
 
-    if (error) {
-      toast.error("Google login failed");
-      return;
-    }
+      if (error) {
+        toast.error("Google login failed");
+        return;
+      }
 
-    if (data) {
-      toast.success("Login successful");
-      router.push("/");
+      if (data) {
+        toast.success("Login successful");
+        router.push("/");
+      }
+    } catch (err) {
+      toast.error("Something went wrong");
+      console.error(err);
     }
-  } catch (err) {
-    toast.error("Something went wrong");
-    console.error(err);
-  }
-};
+  };
 
   return (
     <Card className="border mx-auto w-[85%] lg:w-125 py-10 mt-5">
@@ -131,8 +132,8 @@ const redirectTo = searchParams.get("redirect") || "/";
         <div className="text-center text-sm text-gray-500">OR</div>
 
         <Button onClick={handleGoogleLogin} variant="outline" className="w-full">
-                 <GrGoogle/> Continue with Google
-                </Button>
+          <GrGoogle/> Continue with Google
+        </Button>
 
         <p className="text-center text-sm">
           Don’t have an account?{" "}
@@ -142,5 +143,13 @@ const redirectTo = searchParams.get("redirect") || "/";
         </p>
       </Form>
     </Card>
+  );
+}
+
+export default function LogInPage() {
+  return (
+    <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+      <LogInForm />
+    </Suspense>
   );
 }

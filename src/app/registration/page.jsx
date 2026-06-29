@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { authClient } from "@/lib/auth-client";
 import { Checkbox } from "@heroui/react";
 import Link from "next/link";
@@ -19,17 +20,17 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 
-
-export default function SignUpPage() {
+// 1. Move all the logic into a sub-component
+function SignUpForm() {
   const router = useRouter();
-const searchParams = useSearchParams();
-const redirectTo = searchParams.get("redirect") || "/";
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/";
 
-const {
-  register,
-  handleSubmit,
-  formState: { errors },
-} = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -37,7 +38,7 @@ const {
     const name = e.target.name.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
-     const image = e.target.image.value;
+    const image = e.target.image.value;
     const role = e.target.role.value;
     const plan = "free";
 
@@ -148,19 +149,20 @@ const {
           <Description>Must be at least 6 characters.</Description>
           <FieldError />
         </TextField>
-           <div className="flex flex-col gap-2 w-full hidden">
-                            <Label htmlFor="role" className="text-sm font-semibold">Select Role</Label>
-                            <select
-                                id="role"
-                                {...register("role", { required: "Role is required" })} className="w-full p-2 rounded-xl shadow">
-                                <option value="seller">
-                                    Seller
-                                </option>
-                            </select>
-                            {
-                                errors.role && <p className="text-red-500">{errors.role.message}</p>
-                            }
-                        </div>
+
+        <div className="flex flex-col gap-2 w-full hidden">
+          <Label htmlFor="role" className="text-sm font-semibold">Select Role</Label>
+          <select
+            id="role"
+            {...register("role", { required: "Role is required" })} 
+            className="w-full p-2 rounded-xl shadow"
+          >
+            <option value="seller">
+              Seller
+            </option>
+          </select>
+          {errors.role && <p className="text-red-500">{errors.role.message}</p>}
+        </div>
 
         <div className="flex justify-between gap-2">
           <Button type="submit" className="px-11 bg-emerald-600 hover:bg-white hover:text-emerald-500 hover:border">
@@ -197,5 +199,14 @@ const {
         </p>
       </Form>
     </Card>
+  );
+}
+
+// 2. Wrap the form in Suspense in the default export
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={<div className="text-center mt-10">Loading registration...</div>}>
+      <SignUpForm />
+    </Suspense>
   );
 }
