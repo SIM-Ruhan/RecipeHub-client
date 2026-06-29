@@ -148,19 +148,13 @@ const {
           <Description>Must be at least 6 characters.</Description>
           <FieldError />
         </TextField>
-           <div className="flex flex-col gap-2 w-full">
+           <div className="flex flex-col gap-2 w-full hidden">
                             <Label htmlFor="role" className="text-sm font-semibold">Select Role</Label>
                             <select
                                 id="role"
                                 {...register("role", { required: "Role is required" })} className="w-full p-2 rounded-xl shadow">
-                                <option value="user">
-                                    User
-                                </option>
                                 <option value="seller">
                                     Seller
-                                </option>
-                                <option value="admin">
-                                    Admin
                                 </option>
                             </select>
                             {

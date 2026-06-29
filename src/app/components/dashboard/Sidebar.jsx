@@ -9,8 +9,7 @@ import { usePathname } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 
 // Icons (Adjust imports based on your actual installed icon libraries)
-import { BiRestaurant, BiMoney, BiStar, BiSave, BiPurchaseTag, BiPlus, BiMapAlt } from "react-icons/bi";
-import { TbAsset } from "react-icons/tb";
+import { BiRestaurant, BiMoney, BiStar, BiPurchaseTag, BiPlus, BiMapAlt, BiFoodMenu, BiError } from "react-icons/bi";
 import { ChartArea, User2 } from "lucide-react"; // Assuming these are from lucide-react
 import { HiOutlineMenu, HiOutlineX, HiOutlineLogout } from "react-icons/hi";
 
@@ -44,15 +43,12 @@ const Sidebar = () => {
       { icon: BiMoney, label: "Transaction", link: "/dashboard/seller/transaction" },
       { icon: BiMapAlt, label: "Profile", link: "/dashboard/seller/transaction" },
     ],
-    user: [
-      { icon: ChartArea, label: "Overview", link: "/dashboard/user" },
-      { icon: TbAsset, label: "Products", link: "/dashboard/user/totalRecipe" },
-      { icon: BiMoney, label: "Transaction", link: "/dashboard/buyer/transaction" },
-    ],
     admin: [
       { icon: ChartArea, label: "Overview", link: "/dashboard/admin" },
-      { icon: User2, label: "User Manage", link: "/dashboard/admin/users" },
-      { icon: BiMoney, label: "Transaction", link: "/dashboard/admin/transaction" },
+      { icon: User2, label: "Total users", link: "/dashboard/admin/totalUsers" },
+      { icon: BiFoodMenu, label: "Total recipes", link: "/dashboard/admin/totalRecipe" },
+      { icon: BiFoodMenu, label: "Premium members", link: "/dashboard/admin/premiumMembers" },
+      { icon: BiError, label: "Total reports", link: "/dashboard/admin/totalreports" },
     ],
   };
 
