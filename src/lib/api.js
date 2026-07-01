@@ -6,7 +6,6 @@ export const getRecipe = async () =>{
     return serverFetch("/api/recipes");
 }
 
-
 export const getRecipeId = async(recipeId) => {
     return serverFetch(`/api/recipes/${recipeId}`);
 }

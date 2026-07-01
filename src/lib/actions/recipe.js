@@ -22,30 +22,19 @@
 // };
 
 
-
+"use server"
 // Change to "use server" if you want this to act as a secure server-side bridge
-"use server"; 
+const res = await fetch(`${baseURL}/api/recipes`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(newRecipeData),
+});
 
-const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
+const text = await res.text();
 
-export const CreateRecipe = async (newRecipeData) => {
-  const res = await fetch(`${baseURL}/api/recipes`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(newRecipeData), // This sends the entire object including userPlan
-  });
+console.log("Status:", res.status);
+console.log("Response:", text);
 
-  const data = await res.json();
-
-  if (!res.ok) {
-    // If the error message is specifically "LIMIT_REACHED", 
-    // we want to ensure the frontend can identify it easily.
-    const error = new Error(data.message || "Failed to create recipe");
-    error.errorCode = data.errorCode; // Attach the code if it exists
-    throw error;
-  }
-
-  return data;
-};
+return;
