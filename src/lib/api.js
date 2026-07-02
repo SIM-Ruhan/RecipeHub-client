@@ -13,7 +13,8 @@ export const getRecipeId = async(recipeId) => {
 export const getCompanyRecipe = async({authorId, status = "active"}) => {
 
 const res = await fetch(`${baseURL}/api/recipes?authorId=${authorId}&status=${status}`)
-
+console.log(baseURL)
+console.log(authorId)
 return res.json();
 }
 
