@@ -1,6 +1,6 @@
-// "use client";
+ "use client";
 
-// const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
+ const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
 // export const CreateRecipe = async (newRecipeData) => {
 //   const res = await fetch(`${baseURL}/api/recipes`, {
@@ -21,8 +21,6 @@
 //   return data;
 // };
 
-
-"use server"
 // Change to "use server" if you want this to act as a secure server-side bridge
 const res = await fetch(`${baseURL}/api/recipes`, {
   method: "POST",
