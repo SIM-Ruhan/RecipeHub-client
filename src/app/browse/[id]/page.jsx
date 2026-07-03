@@ -93,9 +93,17 @@ const RecipeDetailsPage = async ({ params }) => {
                         <div className="w-full md:w-auto flex flex-col gap-3 min-w-[240px] bg-gray-50 p-4 rounded-2xl border border-gray-100">
                             
                             {/* Purchase Button */}
-                            <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl shadow-sm flex items-center justify-center gap-2 transition-all">
-                                <BiCreditCard className="text-xl" /> Buy Recipe - ${price}
+                            <form action="/api/checkout_sessions" method="POST">
+  <input type="hidden" name="plan_id" value={"seller_starter"}/>
+      <section>
+        <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl shadow-sm flex items-center justify-center gap-2 transition-all">
+                                <BiCreditCard className="text-xl" /> ${price} (Buy Now)
                             </button>
+      </section>
+    </form>
+                            {/* <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl shadow-sm flex items-center justify-center gap-2 transition-all">
+                                <BiCreditCard className="text-xl" /> Buy Recipe - ${price}
+                            </button> */}
                             
                             <div className="flex items-center justify-between gap-2">
                                 {/* Like Button */}
