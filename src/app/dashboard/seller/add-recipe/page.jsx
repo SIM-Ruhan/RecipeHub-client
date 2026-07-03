@@ -4,9 +4,9 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { BiTrash, BiSave, BiLoaderAlt } from "react-icons/bi";
 import toast from "react-hot-toast";
-import { CreateRecipe } from "@/lib/actions/recipe";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { CreateRecipe } from "@/lib/actions/recipe";
 
 export default function AddRecipePage() {
   const [ingredients, setIngredients] = useState([""]);
