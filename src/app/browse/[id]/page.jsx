@@ -96,7 +96,7 @@ const RecipeDetailsPage = async ({ params }) => {
                             <form action="/api/checkout_sessions" method="POST">
   <input type="hidden" name="plan_id" value={"seller_starter"}/>
       <section>
-        <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl shadow-sm flex items-center justify-center gap-2 transition-all">
+        <button className="w-full bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl shadow-sm flex items-center justify-center gap-2 transition-all">
                                 <BiCreditCard className="text-xl" /> ${price} (Buy Now)
                             </button>
       </section>
