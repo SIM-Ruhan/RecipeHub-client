@@ -1,5 +1,7 @@
  "use client";
 
+import { serverFetch } from "../core/server";
+
  const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const CreateRecipe = async (newRecipeData) => {
@@ -20,6 +22,9 @@ export const CreateRecipe = async (newRecipeData) => {
 
   return data;
 };
+
+
+
 
 // Change to "use server" if you want this to act as a secure server-side bridge
 // const res = await fetch(`${baseURL}/api/recipes`, {
