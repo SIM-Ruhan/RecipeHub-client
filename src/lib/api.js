@@ -18,3 +18,17 @@ console.log(authorId)
 return res.json();
 }
 
+export async function getRecipeStatus(recipeId, userId) {
+    if (!userId) return { isLiked: false, isSaved: false };
+    try {
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/recipes/${recipeId}/status?userId=${userId}`,
+            { cache: 'no-store' }
+        );
+        if (!res.ok) return { isLiked: false, isSaved: false };
+        return res.json();
+    } catch (error) {
+        console.error("Failed to fetch recipe status", error);
+        return { isLiked: false, isSaved: false };
+    }
+}

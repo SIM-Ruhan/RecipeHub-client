@@ -7,7 +7,7 @@ import { TbChefHat, TbTagStarred } from 'react-icons/tb';
 const getFeaturedRecipes = async () => {
   try {
     // Calling your Express backend route
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/recipes`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/favorites`, {
       cache: "no-store",
     });
     if (!res.ok) return [];
@@ -47,15 +47,15 @@ const FeaturedRecipesPage = async () => {
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {featuredRecipes.map((recipe) => {
               // Normalize keys safely mapping to both your DB layout and details parameters
-              const id = recipe._id;
-              const name = recipe.recipeName || recipe.title || "Untitled Recipe";
-              const img = recipe.recipeImage || recipe.image || "/placeholder-recipe.jpg";
-              const category = recipe.category || "General";
-              const author = recipe.authorName || "Chef Spec";
-              const time = recipe.preparationTime || recipe.prepTime || "20";
-              const difficulty = recipe.difficultyLevel || "Medium";
-              const likes = recipe.likesCount || recipe.likes || 0;
-              const price = recipe.price || "00";
+              const id = recipe.recipeId;
+            //   const name = recipe.recipeName || recipe.title || "Untitled Recipe";
+            //   const img = recipe.recipeImage || recipe.image || "/placeholder-recipe.jpg";
+            //   const category = recipe.category || "General";
+              const author = recipe.userId || "Chef Spec";
+            //   const time = recipe.preparationTime || recipe.prepTime || "20";
+            //   const difficulty = recipe.difficultyLevel || "Medium";
+            //   const likes = recipe.likesCount || recipe.likes || 0;
+            //   const price = recipe.price || "00";
 
               return (
                 <div 
