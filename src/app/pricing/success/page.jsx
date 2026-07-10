@@ -1,4 +1,4 @@
-import { metadata } from '@/app/layout'
+
 import { createSubscription } from '@/lib/actions/subscriptions'
 import { stripe } from '@/lib/stripe'
 import Link from 'next/link'
@@ -61,7 +61,7 @@ export default async function Success({ searchParams }) {
         {/* Actions */}
         <div className="space-y-3">
           <Link
-            href="/dashboard/seller"
+            href="/dashboard/seller/Purchased"
             className="flex items-center justify-center w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
           >
             <Package className="mr-2 h-5 w-5" />

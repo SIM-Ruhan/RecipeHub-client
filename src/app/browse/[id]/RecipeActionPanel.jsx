@@ -72,7 +72,35 @@ export default function RecipeActionPanel({
     setIsSaved(!newSaved);
   }
 };
+   const handlePurchase = async () => {
+  if (!requireAuth()) return;
 
+  const newSaved = !isSaved;
+  setIsSaved(newSaved);
+ 
+
+  try {
+    await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/recipes/${recipeId}/favorite`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          isSaved: newSaved,
+        }),
+      }
+    );
+  } catch (error) {
+    console.error("Failed to update favorite", error);
+    setIsSaved(!newSaved);
+  }
+};
+
+
+//end here
     const handleReportSubmit = async (e) => {
         e.preventDefault();
         if (!requireAuth()) return;
@@ -104,13 +132,13 @@ export default function RecipeActionPanel({
                     <input type="hidden" name="recipe_id" value={recipeId} />
                     <input type="hidden" name="user_id" value={userId || ''} />
                     <button 
-                        type="submit" 
+                        type="submit" onClick={handlePurchase}
                         className="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold py-3.5 px-6 rounded-xl shadow-md shadow-emerald-600/10 flex items-center justify-center gap-2.5 transition-all duration-200 tracking-wide text-sm"
                     >
                         <BiCreditCard className="text-xl" /> Buy Recipe Now — ${price}
                     </button>
                 </form>
-
+               
                 <div className="flex flex-col gap-2">
                     <button
                         onClick={handleLike}
