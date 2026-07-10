@@ -31,7 +31,7 @@ export default function RecipeCard({ recipe }) {
     <div className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col h-full">
       
       {/* Image Header */}
-      <Link href={recipeLink} className="relative h-56 w-full overflow-hidden block">
+      <div className="relative h-56 w-full overflow-hidden block">
         <Image unoptimized
           src={image}
           alt={title}
@@ -47,7 +47,7 @@ export default function RecipeCard({ recipe }) {
         <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-xs font-bold text-rose-600 shadow-sm flex items-center gap-1">
           <BiHeart className="text-sm" /> {likesCount}
         </div>
-      </Link>
+      </div>
 
       {/* Card Content */}
       <div className="p-5 flex flex-col flex-1">

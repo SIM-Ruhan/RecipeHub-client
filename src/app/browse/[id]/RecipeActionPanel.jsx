@@ -46,21 +46,32 @@ export default function RecipeActionPanel({
         }
     };
 
-    const handleFavorite = async () => {
-        if (!requireAuth()) return;
-        const newSaved = !isSaved;
-        setIsSaved(newSaved);
-        try {
-            await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/favorites`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, recipeId })
-            });
-        } catch (error) {
-            console.error("Failed to save", error);
-            setIsSaved(!newSaved);
-        }
-    };
+   const handleFavorite = async () => {
+  if (!requireAuth()) return;
+
+  const newSaved = !isSaved;
+  setIsSaved(newSaved);
+ 
+
+  try {
+    await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/recipes/${recipeId}/favorite`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          isSaved: newSaved,
+        }),
+      }
+    );
+  } catch (error) {
+    console.error("Failed to update favorite", error);
+    setIsSaved(!newSaved);
+  }
+};
 
     const handleReportSubmit = async (e) => {
         e.preventDefault();
