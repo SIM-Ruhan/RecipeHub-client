@@ -32,3 +32,8 @@ export async function getRecipeStatus(recipeId, userId) {
         return { isLiked: false, isSaved: false };
     }
 }
+
+export const getSellerStats = async (authorId) => {
+  const res = await fetch(`${baseURL}/api/recipes/stats/${authorId}`);
+  return res.json();
+};

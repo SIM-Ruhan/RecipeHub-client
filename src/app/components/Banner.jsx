@@ -4,7 +4,7 @@ import { HiOutlineArrowLongRight } from 'react-icons/hi2';
 
 const HeroBanner = () => {
   return (
-    <section className="relative bg-gradient-to-b from-emerald-50/50 to-white overflow-hidden">
+    <section className="relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-20 lg:pt-24 lg:pb-28">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
@@ -17,7 +17,7 @@ const HeroBanner = () => {
             </span>
 
             {/* Title */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 leading-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
               Your Daily Dose of <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">
                 Culinary Inspiration

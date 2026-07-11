@@ -1,9 +1,10 @@
+import DashNavbar from "../components/dashboard/DashNavbar";
 import Sidebar from "../components/dashboard/Sidebar";
 
 export default function DashboardLayout({ children }) {
   return (
     // Changed "flex" to "flex-col lg:flex-row" and added "w-full"
-    <div className="flex flex-col lg:flex-row h-screen w-full overflow-hidden bg-background">
+    <div className="flex flex-col lg:flex-row h-screen w-full overflow-hidden">
       
       {/* sidebar - Renders top header on mobile, slide-out drawer, and desktop side menu */}
       <Sidebar />
@@ -12,8 +13,8 @@ export default function DashboardLayout({ children }) {
       <div className="flex-1 flex flex-col overflow-hidden">
         
         {/* Dashboard Sub-Navbar */}
-        <div className="border-b border-gray-200 bg-white p-4 w-full shrink-0">
-          Navbar
+        <div className="border-b border-gray-200 p-4 w-full shrink-0">
+        <DashNavbar/>
         </div>
         
         {/* Scrollable Page Canvas */}

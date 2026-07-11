@@ -28,7 +28,7 @@ export default function RecipeCard({ recipe }) {
   const recipeLink = `/recipe/${id}`;
 
   return (
-    <div className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col h-full">
+    <div className="group rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col h-full">
       
       {/* Image Header */}
       <div className="relative h-56 w-full overflow-hidden block">

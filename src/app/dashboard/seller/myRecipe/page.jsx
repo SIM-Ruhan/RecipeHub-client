@@ -48,41 +48,40 @@ export default function SellerDashboardHomepage() {
     fetchRecipes();
   }, [user]);
 
-  const handleSaveRecipe = async (id, updatedFields) => {
-    // Standardize ID in case it comes back as an object from MongoDB
-    const targetId = typeof id === 'object' && id?.$oid ? id.$oid : id;
-    
-    const res = await fetch(`/api/recipes/${targetId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updatedFields),
-    });
-    if (!res.ok) throw new Error("Patch failed");
+  
+ const baseURL = process.env.NEXT_PUBLIC_BASE_URL
 
-    // Optimistic update in local state
-    setRecipes((prev) =>
-      prev.map((r) => {
-        const rId = typeof r._id === 'object' ? r._id.$oid : r._id;
-        return rId === targetId ? { ...r, ...updatedFields } : r;
-      })
-    );
-  };
+const handleSaveRecipe = async (id, updatedFields) => {
+  const targetId = typeof id === 'object' && id?.$oid ? id.$oid : id;
+console.log("Target",targetId)
+  const res = await fetch(`${baseURL}/api/recipes/${targetId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updatedFields),
+  });
+  if (!res.ok) throw new Error("Patch failed");
+
+  setRecipes((prev) =>
+    prev.map((r) => {
+      const rId = typeof r._id === 'object' ? r._id.$oid : r._id;
+      return rId === targetId ? { ...r, ...updatedFields } : r;
+    })
+  );
+};
 
   const handleDeleteRecipe = async (id) => {
-    const targetId = typeof id === 'object' && id?.$oid ? id.$oid : id;
-    
-    const res = await fetch(`/api/recipes/${targetId}`, {
-      method: "DELETE",
-    });
-    if (!res.ok) throw new Error("Delete failed");
+  const targetId = typeof id === 'object' && id?.$oid ? id.$oid : id;
 
-    // Remove from local state
-    setRecipes((prev) => prev.filter((r) => {
-      const rId = typeof r._id === 'object' ? r._id.$oid : r._id;
-      return rId !== targetId;
-    }));
-  };
+  const res = await fetch(`${baseURL}/api/recipes/${targetId}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error("Delete failed");
 
+  setRecipes((prev) => prev.filter((r) => {
+    const rId = typeof r._id === 'object' ? r._id.$oid : r._id;
+    return rId !== targetId;
+  }));
+};
  
 
   if (isPending) {
@@ -113,22 +112,16 @@ export default function SellerDashboardHomepage() {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.4, duration: 0.5 }}
-        className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+        className="rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
       >
         <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-          <h2 className="text-lg font-bold text-gray-900">My Recent Recipes</h2>
-          <Link
-            href="/dashboard/seller/products"
-            className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
-          >
-            View All <HiOutlineArrowRight />
-          </Link>
+          <h2 className="text-lg font-bold">My Recent Recipes</h2>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-white text-xs uppercase tracking-wider text-gray-500 border-b border-gray-100">
+              <tr className="text-xs uppercase tracking-wider border-b border-gray-100">
                 <th className="px-6 py-4 font-semibold">Recipe Name</th>
                 <th className="px-6 py-4 font-semibold">Category</th>
                 <th className="px-6 py-4 font-semibold">Difficulty</th>
@@ -152,10 +145,10 @@ export default function SellerDashboardHomepage() {
                   
                   return (
                     <tr key={safeId || index} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="px-6 py-4 text-sm font-bold text-gray-900">{recipe.recipeName || "Untitled"}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{recipe.category || "Uncategorized"}</td>
-                      <td className="px-6 py-4 text-sm text-gray-500">{recipe.difficultyLevel || "N/A"}</td>
-                      <td className="px-6 py-4 text-sm font-bold text-gray-900 text-right">{recipe.likesCount || 0}</td>
+                      <td className="px-6 py-4 text-sm font-bold">{recipe.recipeName || "Untitled"}</td>
+                      <td className="px-6 py-4 text-sm">{recipe.category || "Uncategorized"}</td>
+                      <td className="px-6 py-4 text-sm">{recipe.difficultyLevel || "N/A"}</td>
+                      <td className="px-6 py-4 text-sm font-bold text-right">{recipe.likesCount || 0}</td>
                       <td className="px-6 py-4 text-center">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
                           recipe.status === "active"

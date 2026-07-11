@@ -25,11 +25,11 @@ const FeaturedRecipesPage = async () => {
   const featuredRecipes = await getFeaturedRecipes();
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header Title Section */}
         <div className="mb-10 flex flex-col items-center md:text-left">
-          <h1 className="md:text-5xl text-3xl flex items-center font-extrabold text-gray-900 tracking-tight">
+          <h1 className="md:text-5xl text-3xl flex items-center font-extrabold tracking-tight">
          Featured Recipes <TbTagStarred />
           </h1>
           <p className="mt-2 text-sm text-gray-500">
@@ -60,10 +60,10 @@ const FeaturedRecipesPage = async () => {
               return (
                 <div 
                   key={id} 
-                  className="group bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5"
+                  className="group rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5"
                 >
                   {/* Image Aspect Wrapper Container */}
-                  <div className="relative h-48 w-full bg-gray-100 overflow-hidden">
+                  <div className="relative h-48 w-full overflow-hidden">
                     <Image 
                       unoptimized
                       src={img} 
@@ -91,7 +91,7 @@ const FeaturedRecipesPage = async () => {
                       </div>
 
                       {/* Title Heading */}
-                      <h3 className="font-bold text-gray-900 text-base line-clamp-1 group-hover:text-emerald-600 transition-colors mb-3">
+                      <h3 className="font-bold text-base line-clamp-1 group-hover:text-emerald-600 transition-colors mb-3">
                         {name}
                       </h3>
 

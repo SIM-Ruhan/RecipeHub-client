@@ -20,3 +20,4 @@ export const requireRole = async(role) =>{
     }
     return user;
 }
+

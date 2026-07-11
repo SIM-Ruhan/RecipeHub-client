@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-
+import { MdOutlineVerified } from "react-icons/md";
 // Auth
 import { authClient } from "@/lib/auth-client";
 
@@ -68,10 +68,10 @@ const Sidebar = () => {
   return (
     <>
       {/* Mobile Header & Hamburger Menu */}
-      <div className="lg:hidden w-full shrink-0 flex items-center justify-between bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-40">
+      <div className="lg:hidden w-full shrink-0 flex items-center justify-between border-b border-gray-200 px-4 py-3 sticky top-0 z-40">
         <Link href="/" className="flex items-center gap-2">
-          <BiRestaurant className="h-7 w-7 text-emerald-600" />
-          <span className="text-lg font-bold tracking-tight text-gray-900">
+          <BiRestaurant className="h-7 w-7 text-purple-600" />
+          <span className="text-lg font-bold tracking-tight">
             Recipe<span className="text-emerald-500">Hub</span>
           </span>
         </Link>
@@ -93,15 +93,15 @@ const Sidebar = () => {
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-72 border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } flex flex-col h-screen shrink-0`}
       >
         {/* Sidebar Header */}
         <div className="flex items-center justify-between h-16 px-6 border-b border-gray-100 shrink-0">
           <Link href="/" className="flex items-center gap-2">
-            <BiRestaurant className="h-8 w-8 text-emerald-600" />
-            <span className="text-xl font-extrabold tracking-tight text-gray-900">
+            <BiRestaurant className="h-8 w-8 text-purple-600" />
+            <span className="text-xl font-extrabold tracking-tight">
               Recipe<span className="text-emerald-500">Hub</span>
             </span>
           </Link>
@@ -115,7 +115,7 @@ const Sidebar = () => {
         </div>
 
         {/* Dynamic User Mini-Profile Widget */}
-        <div className="px-6 py-6 border-b border-gray-50 shrink-0 min-h-[100px]">
+        <div className="px-6 py-6 border-b border-gray-50 shrink-0 min-h-25">
           {isPending ? (
             // Loading skeleton for user profile
             <div className="animate-pulse flex items-center gap-3">
@@ -138,12 +138,26 @@ const Sidebar = () => {
                 <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white"></span>
               </div>
               <div className="overflow-hidden">
-                <p className="text-sm font-bold text-gray-900 truncate">
+                <p className="text-sm font-bold truncate">
                   {user.name}
                 </p>
-                <p className="text-xs font-medium text-emerald-600 bg-emerald-50 inline-block px-2 py-0.5 rounded-full mt-1 border border-emerald-100 capitalize truncate max-w-full">
-                  {role} Dashboard
-                </p>
+           {user?.plan === "seller_starter" ||
+user?.plan === "seller_master" ||
+user?.plan === "seller_pro" ? (
+  <p className="text-xs font-medium text-yellow-700 bg-yellow-100 inline-block px-2 py-0.5 rounded-full mt-1 border border-yellow-400 capitalize truncate max-w-full">
+    Premium Dashboard
+  </p> 
+) : (
+  <div className="">
+  <p className="text-xs font-medium text-emerald-600 bg-emerald-50 inline-block px-2 py-0.5 rounded-full mt-1 border border-emerald-100 capitalize truncate max-w-full">
+    {user?.role} Dashboard
+  </p>
+  <div className="">
+    <Link href={"/pricing"} className="text-xs font-medium text-yellow-600 bg-yellow-50 inline-block px-2 py-0.5 rounded mt-1 border border-yellow-400">+ Get Premium</Link>
+  </div>
+  </div>
+)}
+                
               </div>
             </div>
           ) : null}

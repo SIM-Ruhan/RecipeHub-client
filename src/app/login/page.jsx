@@ -121,7 +121,6 @@ function LogInForm() {
 
         <div className="flex justify-between gap-2">
           <Button type="submit" className="bg-emerald-600 px-15 hover:bg-white hover:text-emerald-500 hover:border">
-            <Checkbox />
             Login
           </Button>
           <Button type="reset" variant="secondary" className="bg-red-600 text-white px-15 hover:bg-white hover:text-red-500 hover:border">

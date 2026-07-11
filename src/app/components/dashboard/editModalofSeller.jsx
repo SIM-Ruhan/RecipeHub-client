@@ -1,35 +1,38 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { BiEdit, BiX, BiSave, BiLoader } from "react-icons/bi";
 
 export default function EditRecipeModal({ recipe, onClose, onSave }) {
-  const [form, setForm] = useState({
-    recipeName: "",
-    category: "",
-    difficultyLevel: "",
-    cookTime: "",
-    servings: "",
-    description: "",
-    status: "active",
-  });
+  // 1. Initialize state directly from the recipe prop to prevent empty first renders
+  const [form, setForm] = useState(() => ({
+    recipeName: recipe?.recipeName || "",
+    category: recipe?.category || "",
+    difficultyLevel: recipe?.difficultyLevel || "",
+    cookTime: recipe?.preparationTime || "",
+    price: recipe?.price || "", // Added to initial state
+    description: recipe?.description || "",
+    status: recipe?.status || "active",
+  }));
+
+  
+  const [prevRecipeId, setPrevRecipeId] = useState(recipe?._id);
+
+  if (recipe?._id !== prevRecipeId) {
+    setPrevRecipeId(recipe?._id);
+    setForm({
+      recipeName: recipe?.recipeName || "",
+      category: recipe?.category || "",
+      difficultyLevel: recipe?.difficultyLevel || "",
+      cookTime: recipe?.preparationTime || "",
+      price: recipe?.price || "",
+      description: recipe?.description || "",
+      status: recipe?.status || "active",
+    });
+  }
+
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
-
-  // Prefill form when recipe loads
-  useEffect(() => {
-    if (recipe) {
-      setForm({
-        recipeName: recipe.recipeName || "",
-        category: recipe.category || "",
-        difficultyLevel: recipe.difficultyLevel || "",
-        cookTime: recipe.preparationTime || "",
-        price: recipe.price || "",
-        instructions: recipe.instructions || "",
-        status: recipe.status || "active",
-      });
-    }
-  }, [recipe]);
 
   if (!recipe) return null;
 
@@ -48,7 +51,6 @@ export default function EditRecipeModal({ recipe, onClose, onSave }) {
 
     setIsSaving(true);
     try {
-      // Call onSave with the recipe id + updated fields
       await onSave(recipe._id, form);
       onClose();
     } catch (err) {
@@ -130,7 +132,7 @@ export default function EditRecipeModal({ recipe, onClose, onSave }) {
               </Field>
             </div>
 
-            {/* Cook Time + Servings */}
+            {/* Cook Time + Price */}
             <div className="grid grid-cols-2 gap-3">
               <Field label="Cook Time (min)">
                 <input
@@ -146,7 +148,7 @@ export default function EditRecipeModal({ recipe, onClose, onSave }) {
               <Field label="Price">
                 <input
                   type="number"
-                  name="Price"
+                  name="price"  
                   value={form.price}
                   onChange={handleChange}
                   placeholder="4"

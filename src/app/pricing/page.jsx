@@ -36,7 +36,7 @@ const pricingTiers = [
 
 export default function PricingPage() {
   return (
-    <div className="min-h-screen bg-gray-50 py-20 px-4">
+    <div className="min-h-screen py-20 px-4">
       <div className="max-w-6xl mx-auto text-center mb-16">
         <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">
           Choose the plan that <span className="text-emerald-600">fits your kitchen</span>
@@ -51,7 +51,7 @@ export default function PricingPage() {
           <motion.div
             key={index}
             whileHover={{ y: -10 }}
-            className={`bg-white p-8 rounded-3xl shadow-sm border ${
+            className={`p-8 rounded-3xl shadow-sm border ${
               tier.featured ? "border-emerald-500 ring-2 ring-emerald-100" : "border-gray-200"
             }`}
           >
@@ -60,16 +60,16 @@ export default function PricingPage() {
                 Popular
               </span>
             )}
-            <h3 className="text-xl font-bold text-gray-900 mt-4">{tier.name}</h3>
+            <h3 className="text-xl font-bold mt-4">{tier.name}</h3>
             <div className="my-6">
-              <span className="text-5xl font-extrabold text-gray-900">${tier.price}</span>
-              <span className="text-gray-500 ml-2">/ month</span>
+              <span className="text-5xl font-extrabold">${tier.price}</span>
+              <span className="text-gray-400 ml-2">/ month</span>
             </div>
             <p className="text-gray-600 mb-8">{tier.description}</p>
             
             <ul className="space-y-4 mb-8 text-left">
               {tier.features.map((feature, i) => (
-                <li key={i} className="flex items-center gap-3 text-gray-700">
+                <li key={i} className="flex items-center gap-3 text-gray-500">
                   <BiCheck className="text-emerald-500 text-xl" /> {feature}
                 </li>
               ))}
@@ -80,7 +80,7 @@ export default function PricingPage() {
         <button type="submit" role="link"  className={`w-full py-4 rounded-xl font-bold transition-all ${
                 tier.featured
                   ? "bg-emerald-600 text-white hover:bg-emerald-700"
-                  : "bg-gray-100 text-gray-900 hover:bg-gray-200"
+                  : "bg-gray-100 text-gray-900 hover:bg-emerald-400"
               }`}>
           Checkout
         </button>

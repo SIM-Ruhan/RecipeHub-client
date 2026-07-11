@@ -39,12 +39,12 @@ export default function BrowsePage() {
     if (isLoading) return <div className="p-20 text-center">Loading recipes...</div>;
 
     return (
-        <div className="min-h-screen bg-gray-50 py-16 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
                 
                 {/* Header Section */}
                 <div className="max-w-7xl mx-auto mb-12 text-center">
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-4">
+                    <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
                         Explore Culinary <span className="text-emerald-600">Delights</span>
                     </h1>
                     <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -53,7 +53,7 @@ export default function BrowsePage() {
                 </div>
 
                 {/* Search and Filter UI */}
-                <div className="flex flex-col md:flex-row gap-4 mb-10 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                <div className="flex flex-col md:flex-row gap-4 mb-10 p-4 rounded-2xl shadow-sm border border-gray-100">
                     <input 
                         type="text" 
                         placeholder="Search recipes by name..." 
@@ -61,7 +61,7 @@ export default function BrowsePage() {
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
                     <select 
-                        className="p-3 rounded-xl border border-gray-200 bg-gray-50 outline-none"
+                        className="p-3 rounded-xl border border-gray-200 outline-none"
                         onChange={(e) => setCategoryFilter(e.target.value)}
                     >
                         {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
