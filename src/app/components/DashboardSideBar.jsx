@@ -68,7 +68,7 @@ const DashboardSideBar = () => {
         </div>
 
         {/* Navigation Menu */}
-        <nav className="flex-grow overflow-y-auto px-3 py-4 space-y-1">
+        <nav className="grow overflow-y-auto px-3 py-4 space-y-1">
           <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest px-3 pb-2">Navigation</p>
           {
             manuItems?.map(({ key, label, icon: Icon, href }) => {

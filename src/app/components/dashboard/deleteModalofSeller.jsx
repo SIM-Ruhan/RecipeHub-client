@@ -60,7 +60,7 @@ export default function DeleteRecipeModal({ recipe, onClose, onDelete }) {
               Are you sure you want to delete this recipe?
             </p>
             <p className="text-gray-500 text-sm">
-              <span className="font-semibold text-gray-700">{recipe.title}</span> will be permanently removed.
+              <span className="font-semibold text-gray-700">{recipe.recipeName}</span> will be permanently removed.
               This action cannot be undone.
             </p>
           </div>

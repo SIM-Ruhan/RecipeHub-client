@@ -9,7 +9,7 @@ export default function ViewRecipeModal({ recipe, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50/60">
           <div className="flex items-center gap-2">
@@ -32,7 +32,7 @@ export default function ViewRecipeModal({ recipe, onClose }) {
 
           {/* Title + Status */}
           <div className="flex items-start justify-between gap-3">
-            <h3 className="text-xl font-bold text-gray-900 leading-snug">{recipe.title || "Untitled Recipe"}</h3>
+            <h3 className="text-xl font-bold text-gray-900 leading-snug">{recipe.recipeName || "Untitled Recipe"}</h3>
             <span className={`shrink-0 mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
               recipe.status === "active"
                 ? "bg-emerald-50 text-emerald-700 border-emerald-200"
@@ -50,15 +50,15 @@ export default function ViewRecipeModal({ recipe, onClose }) {
           {/* Info Grid */}
           <div className="grid grid-cols-2 gap-3">
             <InfoCard label="Category" value={recipe.category || "—"} />
-            <InfoCard label="Difficulty" value={recipe.difficulty || "—"} />
+            <InfoCard label="Difficulty" value={recipe.difficultyLevel || "—"} />
             <InfoCard
               label="Cook Time"
-              value={recipe.cookTime ? `${recipe.cookTime} min` : "—"}
+              value={recipe.preparationTime ? `${recipe.preparationTime} min` : "—"}
               icon={<BiTime className="w-4 h-4 text-gray-400" />}
             />
             <InfoCard
-              label="Servings"
-              value={recipe.servings ? `${recipe.servings} people` : "—"}
+              label="Price"
+              value={recipe.price ? `${recipe.price} $` : "—"}
               icon={<BiGroup className="w-4 h-4 text-gray-400" />}
             />
           </div>
@@ -67,7 +67,7 @@ export default function ViewRecipeModal({ recipe, onClose }) {
           <div className="flex items-center gap-2 pt-1">
             <BiHeart className="text-rose-500 w-4 h-4" />
             <span className="text-sm text-gray-600">
-              <span className="font-bold text-gray-900">{recipe.likes ?? "0"}</span> likes
+              <span className="font-bold text-gray-900">{recipe.likesCount ?? "0"}</span> likes
             </span>
           </div>
 

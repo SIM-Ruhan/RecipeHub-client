@@ -5,9 +5,9 @@ import { BiEdit, BiX, BiSave, BiLoader } from "react-icons/bi";
 
 export default function EditRecipeModal({ recipe, onClose, onSave }) {
   const [form, setForm] = useState({
-    title: "",
+    recipeName: "",
     category: "",
-    difficulty: "",
+    difficultyLevel: "",
     cookTime: "",
     servings: "",
     description: "",
@@ -20,12 +20,12 @@ export default function EditRecipeModal({ recipe, onClose, onSave }) {
   useEffect(() => {
     if (recipe) {
       setForm({
-        title: recipe.title || "",
+        recipeName: recipe.recipeName || "",
         category: recipe.category || "",
-        difficulty: recipe.difficulty || "",
-        cookTime: recipe.cookTime || "",
-        servings: recipe.servings || "",
-        description: recipe.description || "",
+        difficultyLevel: recipe.difficultyLevel || "",
+        cookTime: recipe.preparationTime || "",
+        price: recipe.price || "",
+        instructions: recipe.instructions || "",
         status: recipe.status || "active",
       });
     }
@@ -41,7 +41,7 @@ export default function EditRecipeModal({ recipe, onClose, onSave }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.title.trim()) {
+    if (!form.recipeName.trim()) {
       setError("Recipe title is required.");
       return;
     }
@@ -95,8 +95,8 @@ export default function EditRecipeModal({ recipe, onClose, onSave }) {
             <Field label="Recipe Title" required>
               <input
                 type="text"
-                name="title"
-                value={form.title}
+                name="recipeName"
+                value={form.recipeName}
                 onChange={handleChange}
                 placeholder="e.g. Spicy Mango Salad"
                 className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition"
@@ -117,8 +117,8 @@ export default function EditRecipeModal({ recipe, onClose, onSave }) {
               </Field>
               <Field label="Difficulty">
                 <select
-                  name="difficulty"
-                  value={form.difficulty}
+                  name="difficultyLevel"
+                  value={form.difficultyLevel}
                   onChange={handleChange}
                   className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition bg-white"
                 >
@@ -143,11 +143,11 @@ export default function EditRecipeModal({ recipe, onClose, onSave }) {
                   className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition"
                 />
               </Field>
-              <Field label="Servings">
+              <Field label="Price">
                 <input
                   type="number"
-                  name="servings"
-                  value={form.servings}
+                  name="Price"
+                  value={form.price}
                   onChange={handleChange}
                   placeholder="4"
                   min="1"

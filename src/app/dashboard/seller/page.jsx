@@ -16,7 +16,7 @@ import { getCompanyRecipe } from "@/lib/api";
 import ViewRecipeModal from "@/app/components/dashboard/viewModalofSeller";
 import EditRecipeModal from "@/app/components/dashboard/editModalofSeller";
 import DeleteRecipeModal from "@/app/components/dashboard/deleteModalofSeller";
-
+const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 export default function SellerDashboardHomepage() {
   const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
@@ -54,40 +54,39 @@ export default function SellerDashboardHomepage() {
     fetchRecipes();
   }, [user]);
 
-  const handleSaveRecipe = async (id, updatedFields) => {
-    // Standardize ID in case it comes back as an object from MongoDB
-    const targetId = typeof id === 'object' && id?.$oid ? id.$oid : id;
-    
-    const res = await fetch(`/api/recipes/${targetId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updatedFields),
-    });
-    if (!res.ok) throw new Error("Patch failed");
+ const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
-    // Optimistic update in local state
-    setRecipes((prev) =>
-      prev.map((r) => {
-        const rId = typeof r._id === 'object' ? r._id.$oid : r._id;
-        return rId === targetId ? { ...r, ...updatedFields } : r;
-      })
-    );
-  };
+const handleSaveRecipe = async (id, updatedFields) => {
+  const targetId = typeof id === 'object' && id?.$oid ? id.$oid : id;
 
-  const handleDeleteRecipe = async (id) => {
-    const targetId = typeof id === 'object' && id?.$oid ? id.$oid : id;
-    
-    const res = await fetch(`/api/recipes/${targetId}`, {
-      method: "DELETE",
-    });
-    if (!res.ok) throw new Error("Delete failed");
+  const res = await fetch(`${baseURL}/api/recipes/${targetId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updatedFields),
+  });
+  if (!res.ok) throw new Error("Patch failed");
 
-    // Remove from local state
-    setRecipes((prev) => prev.filter((r) => {
+  setRecipes((prev) =>
+    prev.map((r) => {
       const rId = typeof r._id === 'object' ? r._id.$oid : r._id;
-      return rId !== targetId;
-    }));
-  };
+      return rId === targetId ? { ...r, ...updatedFields } : r;
+    })
+  );
+};
+
+const handleDeleteRecipe = async (id) => {
+  const targetId = typeof id === 'object' && id?.$oid ? id.$oid : id;
+
+  const res = await fetch(`${baseURL}/api/recipes/${targetId}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error("Delete failed");
+
+  setRecipes((prev) => prev.filter((r) => {
+    const rId = typeof r._id === 'object' ? r._id.$oid : r._id;
+    return rId !== targetId;
+  }));
+};
 
   const stats = [
     { title: "Active Recipes", value: recipes.length || "0", icon: BiBookOpen, color: "text-blue-600",   bg: "bg-blue-100" },

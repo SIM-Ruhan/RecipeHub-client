@@ -48,11 +48,8 @@ export default function RecipeActionPanel({
 
    const handleFavorite = async () => {
   if (!requireAuth()) return;
-
   const newSaved = !isSaved;
   setIsSaved(newSaved);
- 
-
   try {
     await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/recipes/${recipeId}/favorite`,
@@ -72,33 +69,35 @@ export default function RecipeActionPanel({
     setIsSaved(!newSaved);
   }
 };
-   const handlePurchase = async () => {
-  if (!requireAuth()) return;
+//start
+const handlePurchase = async () => {
 
-  const newSaved = !isSaved;
-  setIsSaved(newSaved);
- 
+    if (!requireAuth()) return;
 
-  try {
-    await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/recipes/${recipeId}/favorite`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId,
-          isSaved: newSaved,
-        }),
-      }
-    );
-  } catch (error) {
-    console.error("Failed to update favorite", error);
-    setIsSaved(!newSaved);
-  }
+    try {
+
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/purchases`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    recipeId,
+                    userId,
+                    price,
+                }),
+            }
+        );
+
+    } catch (err) {
+
+        console.log(err);
+
+    }
+
 };
-
 
 //end here
     const handleReportSubmit = async (e) => {
