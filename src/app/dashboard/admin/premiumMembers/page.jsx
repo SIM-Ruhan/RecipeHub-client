@@ -2,21 +2,22 @@
 import { serverFetch } from '@/lib/core/server';
 import React from 'react';
 import Image from 'next/image';
-import BlockButton from './BlockButton';
+import { MdOutlineWorkspacePremium } from "react-icons/md";
 
 const getUsers = async () => {
   const res = await serverFetch("/api/users");
   return res || [];
 };
 
-const ManageUsersPage = async () => {
+const PremiumUsers = async () => {
   const users = await getUsers();
 
   return (
     <div className="p-8 min-h-screen">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">Manage Users 👥</h1>
-        <p className="text-sm text-gray-500">Block/unblock users and manage roles</p>
+      <div className="mb-6 flex items-center gap-2">
+        <h1 className="text-2xl font-bold">Premium Users </h1>
+           <div className='text-xl font-bold bg-amber-300 rounded-full p-1'><MdOutlineWorkspacePremium />
+       </div> 
       </div>
 
       <div className="rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -26,7 +27,7 @@ const ManageUsersPage = async () => {
               <th className="p-4 text-xs font-semibold uppercase">User</th>
               <th className="p-4 text-xs font-semibold uppercase">Role</th>
               <th className="p-4 text-xs font-semibold uppercase">Package</th>
-              <th className="p-4 text-xs font-semibold uppercase text-right">Actions</th>
+   
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
@@ -47,9 +48,7 @@ const ManageUsersPage = async () => {
                 </td>
                 <td className="p-4 text-sm capitalize">{user.role}</td>
                 <td className="p-4 text-sm">{user.plan || 'Free'}</td>
-                <td className="p-4 text-right">
-                  <BlockButton userId={user._id} isBlocked={user.isBlocked}   role={user.role}/>
-                </td>
+               
               </tr>
             ))}
           </tbody>
@@ -59,4 +58,4 @@ const ManageUsersPage = async () => {
   );
 };
 
-export default ManageUsersPage;
+export default PremiumUsers;

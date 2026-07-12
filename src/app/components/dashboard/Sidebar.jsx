@@ -4,12 +4,11 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { MdOutlineVerified } from "react-icons/md";
 // Auth
 import { authClient } from "@/lib/auth-client";
 
 // Icons (Adjust imports based on your actual installed icon libraries)
-import { BiRestaurant, BiMoney, BiStar, BiPurchaseTag, BiPlus, BiMapAlt, BiFoodMenu, BiError, BiLike} from "react-icons/bi";
+import { BiRestaurant, BiMoney, BiStar, BiPurchaseTag, BiPlus, BiMapAlt, BiFoodMenu, BiError, BiLike, BiHomeCircle} from "react-icons/bi";
 import { ChartArea, User2 } from "lucide-react"; // Assuming these are from lucide-react
 import { HiOutlineMenu, HiOutlineX, HiOutlineLogout } from "react-icons/hi";
 
@@ -50,6 +49,7 @@ const Sidebar = () => {
       { icon: BiFoodMenu, label: "Total recipes", link: "/dashboard/admin/totalRecipe" },
       { icon: BiFoodMenu, label: "Premium members", link: "/dashboard/admin/premiumMembers" },
       { icon: BiError, label: "Total reports", link: "/dashboard/admin/totalreports" },
+      { icon: BiHomeCircle, label: "Profile", link: "/dashboard/admin/transaction" },
     ],
   };
 

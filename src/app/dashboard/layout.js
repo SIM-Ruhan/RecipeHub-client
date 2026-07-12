@@ -13,12 +13,12 @@ export default function DashboardLayout({ children }) {
       <div className="flex-1 flex flex-col overflow-hidden">
         
         {/* Dashboard Sub-Navbar */}
-        <div className="border-b border-gray-200 p-4 w-full shrink-0">
+        <div className="border-b border-gray-200 p-4 my-1.5 w-full shrink-0">
         <DashNavbar/>
         </div>
         
         {/* Scrollable Page Canvas */}
-        <main className="flex-1 overflow-y-auto p-5 bg-gray-50/50">
+        <main className="flex-1 overflow-y-auto p-5">
           {children}
         </main>
       </div>

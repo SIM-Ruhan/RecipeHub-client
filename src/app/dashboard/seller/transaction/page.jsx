@@ -81,8 +81,8 @@ import { BiCheckCircle, BiCalendar, BiShield } from "react-icons/bi";
 
 const PLAN_CONFIG = {
   seller_starter: { label: "Starter",  badgeClass: "badge-info" },
-  seller_pro:     { label: "Pro",      badgeClass: "badge badge-info"},
-  seller_master:  { label: "Master",   badgeClass: "badge badge-error" },
+  seller_pro:     { label: "Pro",      badgeClass: "badge bg-yellow-200 border border-yellow-400"},
+  seller_master:  { label: "Master",   badgeClass: "badge bg-yellow-300 border border-yellow-500" },
 };
 
 const formatJoinDate = (dateValue) => {
@@ -162,13 +162,13 @@ const MyProfile = () => {
           {/* Badges: Role + Plan */}
           <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
             {user?.role && (
-              <span className="badge badge-outline gap-1 capitalize">
+              <span className="badge border border-green-400 bg-green-200 gap-1 capitalize">
                 <BiShield className="w-3.5 h-3.5" />
                 {user.role}
               </span>
             )}
             <span className={`badge ${plan.badgeClass} gap-1 font-semibold`}>
-              {plan.label} Plan
+              Plan: {plan.label} 
             </span>
             {user?.isBlocked && (
               <span className="badge badge-error gap-1">Blocked</span>
@@ -187,8 +187,8 @@ const MyProfile = () => {
           <div className="w-full border-t border-base-300 my-6" />
 
           {/* Button — untouched */}
-          <Link href="/dashboard/seller/transaction/update">
-            <button className="w-full md:w-auto mt-4 px-6 py-2 btn btn-soft btn-info">
+          <Link href={`/dashboard/${user?.role}/transaction/update`}>
+            <button className="w-full md:w-auto mt-4 px-6 py-2 btn btn-soft btn-info border border-blue-300">
               Update Profile
             </button>
           </Link>

@@ -33,22 +33,22 @@ const TotalRecipePage = async () => {
   const recipes = await getRecipes();
 
   return (
-    <div className="p-8 bg-white min-h-screen">
+    <div className="p-8 min-h-screen">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Manage Recipes 🍲</h1>
+        <h1 className="text-2xl font-bold">Manage Recipes 🍲</h1>
         <p className="text-sm text-gray-500">Feature recipes or remove them from the platform</p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="p-4 text-xs font-semibold text-gray-500 capitalize">Recipe</th>
-              <th className="p-4 text-xs font-semibold text-gray-500 capitalize">Author</th>
-              <th className="p-4 text-xs font-semibold text-gray-500 capitalize">Category</th>
-              <th className="p-4 text-xs font-semibold text-gray-500 capitalize">Likes</th>
-              <th className="p-4 text-xs font-semibold text-gray-500 capitalize">Featured</th>
-              <th className="p-4 text-xs font-semibold text-gray-500 capitalize">Actions</th>
+            <tr className="border-b border-gray-100">
+              <th className="p-4 text-xs font-semibold capitalize">Recipe</th>
+              <th className="p-4 text-xs font-semibold capitalize">Author</th>
+              <th className="p-4 text-xs font-semibold capitalize">Category</th>
+              <th className="p-4 text-xs font-semibold capitalize">Likes</th>
+              <th className="p-4 text-xs font-semibold capitalize">Featured</th>
+              <th className="p-4 text-xs font-semibold capitalize">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
@@ -63,13 +63,13 @@ const TotalRecipePage = async () => {
                     height={48}
                     className="w-12 h-12 rounded-lg object-cover"
                   />
-                  <span className="font-semibold text-gray-800 text-sm">
+                  <span className="font-semibold text-sm">
                     {recipe.recipeName || 'Untitled Recipe'}
                   </span>
                 </td>
 
                 {/* Author */}
-                <td className="p-4 text-sm text-gray-800">
+                <td className="p-4 text-sm">
                   {recipe.authorName || 'Unknown'}
                 </td>
 
@@ -81,7 +81,7 @@ const TotalRecipePage = async () => {
                 </td>
 
                 {/* Likes */}
-                <td className="p-4 text-sm font-medium text-gray-700 flex items-center gap-1 mt-2">
+                <td className="p-4 text-sm font-medium flex items-center gap-1 mt-2">
                   <span className="text-red-500">❤️</span> {recipe.likes || 0}
                 </td>
 
