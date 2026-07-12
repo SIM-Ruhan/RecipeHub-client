@@ -100,28 +100,32 @@ const handlePurchase = async () => {
 };
 
 //end here
-    const handleReportSubmit = async (e) => {
-        e.preventDefault();
-        if (!requireAuth()) return;
-        setIsSubmittingReport(true);
+   const handleReportSubmit = async (e) => {
+  e.preventDefault();
+  if (!requireAuth()) return;
+  setIsSubmittingReport(true);
 
-        const finalReason = otherReason.trim() ? otherReason.trim() : reportType;
-
-        try {
-            await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/reports`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ recipeId, reportedBy: userId, reason: finalReason })
-            });
-            setShowModal(false);
-            setOtherReason('');
-            alert("Recipe reported successfully.");
-        } catch (error) {
-            console.error("Failed to report", error);
-        } finally {
-            setIsSubmittingReport(false);
-        }
-    };
+  try {
+    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/reports`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        recipeId,
+        reportedBy: userId,
+        reason: reportType,
+        description: otherReason.trim() || null,
+      })
+    });
+    setShowModal(false);
+    setOtherReason('');
+    alert("Recipe reported successfully.");
+  } catch (error) {
+    console.error("Failed to report", error);
+    alert("Failed to submit report. Please try again.");
+  } finally {
+    setIsSubmittingReport(false);
+  }
+};
 
     return (
         <>

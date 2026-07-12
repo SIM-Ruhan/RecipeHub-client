@@ -85,7 +85,7 @@ const RecipeDetailsPage = async ({ params }) => {
         </div>
 
         {/* Premium Hero Media Frame */}
-        <div className="relative mt-5 mx-4 md:mx-10 rounded-2xl overflow-hidden h-80 md:h-[28rem] shadow-inner bg-slate-100">
+        <div className="relative mt-5 mx-4 md:mx-10 rounded-2xl overflow-hidden h-80 md:h-112 shadow-inner bg-slate-100">
           <Image
             unoptimized
             src={recipeImage || "/placeholder-recipe.jpg"}
@@ -169,7 +169,7 @@ const RecipeDetailsPage = async ({ params }) => {
                       {/* Modernized Timeline Trace Guide */}
                       {i !== instructions.length - 1 && (
                         <span
-                          className="absolute left-[18px] top-9 bottom-0 w-0.5 bg-slate-100 group-hover:bg-slate-200 transition-colors"
+                          className="absolute left-4.5 top-9 bottom-0 w-0.5 bg-slate-100 group-hover:bg-slate-200 transition-colors"
                         />
                       )}
                       <span

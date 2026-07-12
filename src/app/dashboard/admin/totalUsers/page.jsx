@@ -1,4 +1,3 @@
-
 import { serverFetch } from '@/lib/core/server';
 import React from 'react';
 import Image from 'next/image';
@@ -7,6 +6,39 @@ import BlockButton from './BlockButton';
 const getUsers = async () => {
   const res = await serverFetch("/api/users");
   return res || [];
+};
+
+// Helper function to handle badge styling based on the plan
+const getPlanBadge = (plan) => {
+  const normalizedPlan = plan ? plan.toLowerCase() : 'free';
+
+  switch (normalizedPlan) {
+    case 'seller_starter':
+      return (
+        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200 uppercase tracking-wider">
+          Starter
+        </span>
+      );
+    case 'seller_pro':
+      return (
+        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200 uppercase tracking-wider">
+          Pro
+        </span>
+      );
+    case 'seller_master':
+      return (
+        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-rose-100 text-rose-800 border border-rose-200 uppercase tracking-wider">
+          Master
+        </span>
+      );
+    case 'free':
+    default:
+      return (
+        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200 capitalize">
+          {plan || 'Free'}
+        </span>
+      );
+  }
 };
 
 const ManageUsersPage = async () => {
@@ -46,9 +78,11 @@ const ManageUsersPage = async () => {
                   </div>
                 </td>
                 <td className="p-4 text-sm capitalize">{user.role}</td>
-                <td className="p-4 text-sm">{user.plan || 'Free'}</td>
+                <td className="p-4 text-sm">
+                  {getPlanBadge(user.plan)}
+                </td>
                 <td className="p-4 text-right">
-                  <BlockButton userId={user._id} isBlocked={user.isBlocked}   role={user.role}/>
+                  <BlockButton userId={user._id} isBlocked={user.isBlocked} role={user.role}/>
                 </td>
               </tr>
             ))}

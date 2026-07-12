@@ -37,3 +37,24 @@ export const getSellerStats = async (authorId) => {
   const res = await fetch(`${baseURL}/api/recipes/stats/${authorId}`);
   return res.json();
 };
+
+export const getAdminReports = async (status = "pending") => {
+  const res = await fetch(`${baseURL}/api/admin/reports?status=${status}`, { cache: "no-store" });
+  return res.json();
+};
+
+export const dismissReport = async (reportId) => {
+  const res = await fetch(`${baseURL}/api/admin/reports/${reportId}/dismiss`, {
+    method: "PATCH",
+  });
+  if (!res.ok) throw new Error("Dismiss failed");
+  return res.json();
+};
+
+export const removeReportedRecipe = async (reportId) => {
+  const res = await fetch(`${baseURL}/api/admin/reports/${reportId}/remove-recipe`, {
+    method: "PATCH",
+  });
+  if (!res.ok) throw new Error("Remove failed");
+  return res.json();
+};
