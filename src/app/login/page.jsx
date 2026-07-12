@@ -120,10 +120,10 @@ function LogInForm() {
         </TextField>
 
         <div className="flex justify-between gap-2">
-          <Button type="submit" className="bg-emerald-600 px-15 hover:bg-white hover:text-emerald-500 hover:border">
+          <Button type="submit" className="bg-emerald-600 px-10 sm:px-15 hover:bg-white hover:text-emerald-500 hover:border">
             Login
           </Button>
-          <Button type="reset" variant="secondary" className="bg-red-600 text-white px-15 hover:bg-white hover:text-red-500 hover:border">
+          <Button type="reset" variant="secondary" className="bg-red-600 text-white px-10 sm:px-15 hover:bg-white hover:text-red-500 hover:border">
             Reset
           </Button>
         </div>
@@ -136,7 +136,7 @@ function LogInForm() {
 
         <p className="text-center text-sm">
           Don’t have an account?{" "}
-          <Link href={`/auth/registration?redirect=${redirectTo}`} className="text-blue-600 btn">
+          <Link href={`/registration`} className="text-blue-600 btn">
             Register here
           </Link>
         </p>

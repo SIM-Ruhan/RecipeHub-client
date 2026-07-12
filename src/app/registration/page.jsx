@@ -2,7 +2,6 @@
 
 import { Suspense } from "react";
 import { authClient } from "@/lib/auth-client";
-import { Checkbox } from "@heroui/react";
 import Link from "next/link";
 import { GrGoogle } from "react-icons/gr";
 
@@ -165,15 +164,14 @@ function SignUpForm() {
         </div>
 
         <div className="flex justify-between gap-2">
-          <Button type="submit" className="px-11 bg-emerald-600 hover:bg-white hover:text-emerald-500 hover:border">
-            <Checkbox />
+          <Button type="submit" className="px-7 sm:px-11 bg-emerald-600 hover:bg-white hover:text-emerald-500 hover:border">
             Register
           </Button>
 
           <Button
             type="reset"
             variant="secondary"
-            className="bg-red-600 text-white px-15 hover:bg-white hover:text-red-500 hover:border"
+            className="bg-red-600 text-white px-7 sm:px-11 hover:bg-white hover:text-red-500 hover:border"
           >
             Reset
           </Button>

@@ -58,3 +58,8 @@ export const removeReportedRecipe = async (reportId) => {
   if (!res.ok) throw new Error("Remove failed");
   return res.json();
 };
+
+export const getAdminStats = async () => {
+  const res = await fetch(`${baseURL}/api/admin/stats`, { cache: "no-store" });
+  return res.json();
+};

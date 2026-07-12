@@ -57,10 +57,10 @@ const user = session?.user;
   const getLinkClasses = (path) => 
     isActive(path)
       ? "text-emerald-600 font-bold transition-colors duration-200"
-      : "text-gray-600 hover:text-emerald-600 font-medium transition-colors duration-200";
+      : "text-white hover:text-emerald-600 font-medium transition-colors duration-200";
 
   return (
-    <nav className="shadow-md sticky top-0 z-50">
+    <nav className="bg-[#0B1849] shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           
@@ -91,7 +91,7 @@ const user = session?.user;
             )}
 
               {/* Start here */}
-<div className="">
+<div className="text-white">
                  <label className="swap swap-rotate">
             <input
               type="checkbox"

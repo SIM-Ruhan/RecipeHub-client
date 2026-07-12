@@ -15,7 +15,7 @@ const formatDate = (value) => {
   const raw = typeof value === "object" && value?.$date ? value.$date : value;
   const d = new Date(raw);
   if (isNaN(d.getTime())) return "—";
-  return d.toLocaleDateString("en-GB"); // DD/MM/YYYY, matches screenshot
+  return d.toLocaleDateString("en-GB"); 
 };
 
 export default function RecipeReportsPage() {
