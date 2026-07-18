@@ -2,8 +2,11 @@ import { serverFetch } from "./core/server";
 
 const baseURL = process.env.NEXT_PUBLIC_BASE_URL ;
 
-export const getRecipe = async () =>{
-    return serverFetch("/api/recipes");
+
+export const getRecipe = async (params = {}) => {
+    const queryString = new URLSearchParams(params).toString();
+    const url = `/api/recipes${queryString ? `?${queryString}` : ""}`;
+    return serverFetch(url);
 }
 
 export const getRecipeId = async(recipeId) => {

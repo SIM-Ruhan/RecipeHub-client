@@ -54,7 +54,7 @@ export default function AdminOverviewPage() {
         {STAT_CARDS.map((card) => (
           <div
             key={card.key}
-            className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col items-center text-center"
+            className="rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col items-center text-center"
           >
             <span className="text-3xl mb-3">{card.emoji}</span>
             {isLoading ? (
@@ -70,14 +70,14 @@ export default function AdminOverviewPage() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-        <h2 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h2>
+      <div className="rounded-2xl border border-gray-100 shadow-sm p-6">
+        <h2 className="text-lg font-bold mb-4">Quick Actions</h2>
         <div className="flex flex-wrap gap-3">
           {QUICK_ACTIONS.map((action) => (
             <Link
               key={action.label}
               href={action.href}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-sm font-semibold text-gray-800 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-sm font-semibold transition-colors"
             >
               <span>{action.emoji}</span>
               {action.label}

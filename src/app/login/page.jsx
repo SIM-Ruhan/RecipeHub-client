@@ -2,7 +2,6 @@
 
 import { Suspense } from "react";
 import { authClient } from "@/lib/auth-client"; 
-import { Checkbox } from "@heroui/react";
 import { GrGoogle } from "react-icons/gr";
 import {
   Button,
@@ -66,7 +65,7 @@ function LogInForm() {
   };
 
   return (
-    <Card className="border mx-auto w-[85%] lg:w-125 py-10 mt-5">
+    <Card className="border mx-auto w-[85%] lg:w-125 py-10 my-5">
       <h1 className="text-center text-2xl font-bold">Log In</h1>
 
       <Form

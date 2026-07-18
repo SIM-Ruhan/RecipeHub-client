@@ -60,7 +60,7 @@ export default function RecipeCard({ recipe }) {
 
         {/* Title */}
         <Link href={recipeLink}>
-          <h3 className="text-lg font-bold text-gray-900 leading-tight mb-2 group-hover:text-emerald-600 transition-colors line-clamp-2">
+          <h3 className="text-lg font-bold leading-tight mb-2 group-hover:text-emerald-600 transition-colors line-clamp-2">
             {title}
           </h3>
         </Link>
