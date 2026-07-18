@@ -65,7 +65,7 @@ function LogInForm() {
   };
 
   return (
-    <Card className="border mx-auto w-[85%] lg:w-125 py-10 my-5">
+    <Card className="border bg-transparent mx-auto w-[85%] lg:w-125 py-10 my-10">
       <h1 className="text-center text-2xl font-bold">Log In</h1>
 
       <Form
@@ -129,7 +129,7 @@ function LogInForm() {
 
         <div className="text-center text-sm text-gray-500">OR</div>
 
-        <Button onClick={handleGoogleLogin} variant="outline" className="w-full">
+        <Button onClick={handleGoogleLogin} variant="outline" className="w-full bg-amber-50">
           <GrGoogle/> Continue with Google
         </Button>
 

@@ -87,7 +87,7 @@ function SignUpForm() {
   };
 
   return (
-    <Card className="border mx-auto w-[85%] lg:w-125 py-10 my-15">
+    <Card className="border bg-transparent mx-auto w-[85%] lg:w-125 py-10 my-15">
       <h1 className="text-center text-2xl font-bold">Register</h1>
 
       <Form
@@ -149,7 +149,7 @@ function SignUpForm() {
           <FieldError />
         </TextField>
 
-        <div className="flex flex-col gap-2 w-full hidden">
+        <div className="hidden">
           <Label htmlFor="role" className="text-sm font-semibold">Select Role</Label>
           <select
             id="role"
@@ -183,7 +183,7 @@ function SignUpForm() {
           type="button"
           onClick={handleGoogleLogin}
           variant="outline"
-          className="w-full"
+          className="w-full bg-amber-50"
         >
           <GrGoogle />
           Continue with Google

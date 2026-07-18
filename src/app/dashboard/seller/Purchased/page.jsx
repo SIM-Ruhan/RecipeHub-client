@@ -16,9 +16,11 @@ export default function PurchasedRecipesPage() {
     if (isPending) return;
 
     if (!userId) {
+    setTimeout(() => {
       setLoading(false);
-      return;
-    }
+    }, 0);
+    return;
+  }
 
     const fetchPurchasedRecipes = async () => {
       try {
@@ -65,7 +67,7 @@ export default function PurchasedRecipesPage() {
   if (recipes.length === 0) {
     return (
       <div className="text-center py-20">
-        <h2 className="text-2xl font-bold text-gray-700">
+        <h2 className="text-2xl font-bold">
           No Purchased Recipes
         </h2>
 
@@ -89,7 +91,7 @@ export default function PurchasedRecipesPage() {
       {/* Heading */}
 
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">
+        <h1 className="text-3xl font-bold">
           Purchased Recipes
         </h1>
 
@@ -103,11 +105,11 @@ export default function PurchasedRecipesPage() {
 
       {/* Table */}
 
-      <div className="overflow-x-auto rounded-2xl border border-gray-200 shadow-md bg-white">
+      <div className="overflow-x-auto rounded-2xl border border-gray-200 shadow-md">
 
         <table className="table w-full">
 
-          <thead className="bg-emerald-600 text-white">
+          <thead className="bg-[#0F3040] text-white">
 
             <tr>
 
@@ -146,7 +148,7 @@ export default function PurchasedRecipesPage() {
                    
                     <div>
 
-                      <h2 className="font-semibold text-gray-800">
+                      <h2 className="font-semibold">
                         {recipe.recipeName}
                       </h2>
 
@@ -174,7 +176,7 @@ export default function PurchasedRecipesPage() {
                     : "--"}
 
                 </td>
-<td><Link href={`/browse/${recipe.recipeId}`} className="bg-emerald-500 text-center hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
+<td><Link href={`/browse/${recipe.recipeId}`} className="inline-flex items-center justify-center bg-linear-to-r from-emerald-500 to-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:from-emerald-600 hover:to-green-800">
 View Recipe
 </Link></td>
               </tr>

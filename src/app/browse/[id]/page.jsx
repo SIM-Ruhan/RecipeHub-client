@@ -66,10 +66,10 @@ const RecipeDetailsPage = async ({ params }) => {
 
   return (
     <div
-      className={`${fraunces.variable} ${inter.variable} ${plexMono.variable} min-h-screen bg-slate-50 py-10 px-4 antialiased`}
+      className={`${fraunces.variable} ${inter.variable} ${plexMono.variable} min-h-screen py-10 px-4 antialiased`}
       style={{ fontFamily: 'var(--font-body)' }}
     >
-      <div className="max-w-5xl mx-auto bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] overflow-hidden">
+      <div className="max-w-5xl mx-auto rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] overflow-hidden">
         
         {/* Back Navigation Bar */}
         <div className="px-6 md:px-10 pt-6 flex items-center justify-between">
@@ -79,7 +79,7 @@ const RecipeDetailsPage = async ({ params }) => {
           >
             <BiChevronLeft className="text-xl transition-transform group-hover:-translate-x-0.5" /> Back to Browse
           </Link>
-          <span className="text-xs font-mono font-medium text-slate-400 bg-slate-100 px-2.5 py-1 rounded-md">
+          <span className="text-xs font-mono font-medium text-slate-400 px-2.5 py-1 rounded-md">
             ID: {(_id || id).substring(0, 8).toUpperCase()}
           </span>
         </div>
@@ -148,6 +148,7 @@ const RecipeDetailsPage = async ({ params }) => {
                   initialIsSaved={status?.isSaved || false}
                   price={price}
                   userId={userId}
+                  title={recipeName}
                 />
               </div>
 
@@ -156,7 +157,7 @@ const RecipeDetailsPage = async ({ params }) => {
             {/* Right Content Column (Instructions Timeline) */}
             <div className="lg:col-span-7">
               <h3
-                className="text-2xl font-bold text-slate-900 tracking-tight mb-6"
+                className="text-2xl font-bold tracking-tight mb-6"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 Preparation Method
@@ -169,7 +170,7 @@ const RecipeDetailsPage = async ({ params }) => {
                       {/* Modernized Timeline Trace Guide */}
                       {i !== instructions.length - 1 && (
                         <span
-                          className="absolute left-4.5 top-9 bottom-0 w-0.5 bg-slate-100 group-hover:bg-slate-200 transition-colors"
+                          className="absolute left-4.5 top-9 bottom-0 w-0.5 group-hover:bg-slate-200 transition-colors"
                         />
                       )}
                       <span
@@ -178,8 +179,8 @@ const RecipeDetailsPage = async ({ params }) => {
                       >
                         {String(i + 1).padStart(2, '0')}
                       </span>
-                      <div className="bg-slate-50/50 hover:bg-slate-50 border border-transparent hover:border-slate-100 p-4 rounded-xl transition-all duration-200">
-                        <p className="text-[15px] leading-relaxed text-slate-600 font-medium">
+                      <div className="hover:bg-slate-50 border border-transparent hover:border-slate-100 p-4 rounded-xl transition-all duration-200">
+                        <p className="text-[15px] leading-relaxed text-slate-500 font-medium">
                           {step}
                         </p>
                       </div>
@@ -187,7 +188,7 @@ const RecipeDetailsPage = async ({ params }) => {
                   ))}
                 </ol>
               ) : (
-                <p className="text-sm italic text-slate-400 bg-slate-50 border border-slate-100 rounded-xl p-4 text-center">
+                <p className="text-sm italic text-slate-400 border border-slate-100 rounded-xl p-4 text-center">
                   No steps added for this recipe yet.
                 </p>
               )}

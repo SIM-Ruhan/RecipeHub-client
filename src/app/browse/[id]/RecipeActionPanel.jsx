@@ -5,7 +5,7 @@ import { BiHeart, BiBookmark, BiFlag, BiCreditCard, BiSolidHeart, BiSolidBookmar
 import { useRouter } from 'next/navigation';
 
 export default function RecipeActionPanel({
-    recipeId, initialLikes, initialIsLiked = false, initialIsSaved = false, price, userId
+    recipeId, initialLikes, initialIsLiked = false, initialIsSaved = false, price, userId,title
 }) {
     const router = useRouter();
 
@@ -69,37 +69,7 @@ export default function RecipeActionPanel({
     setIsSaved(!newSaved);
   }
 };
-//start
-const handlePurchase = async () => {
 
-    if (!requireAuth()) return;
-
-    try {
-
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/api/purchases`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    recipeId,
-                    userId,
-                    price,
-                }),
-            }
-        );
-
-    } catch (err) {
-
-        console.log(err);
-
-    }
-
-};
-
-//end here
    const handleReportSubmit = async (e) => {
   e.preventDefault();
   if (!requireAuth()) return;
@@ -130,12 +100,13 @@ const handlePurchase = async () => {
     return (
         <>
             <div className="w-full flex flex-col gap-3 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm shadow-slate-100">
-                <form action="/api/checkout_sessions" method="POST">
-                    <input type="hidden" name="plan_id" value="seller_starter" />
-                    <input type="hidden" name="recipe_id" value={recipeId} />
+                <form action="/api/payment" method="POST">
+                    <input type="hidden" name="price" value={price} />
+                    <input type="hidden" name="productId" value={recipeId} />
+                    <input type="hidden" name="title" value={title} />
                     <input type="hidden" name="user_id" value={userId || ''} />
                     <button 
-                        type="submit" onClick={handlePurchase}
+                        type="submit"
                         className="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold py-3.5 px-6 rounded-xl shadow-md shadow-emerald-600/10 flex items-center justify-center gap-2.5 transition-all duration-200 tracking-wide text-sm"
                     >
                         <BiCreditCard className="text-xl" /> Buy Recipe Now — ${price}

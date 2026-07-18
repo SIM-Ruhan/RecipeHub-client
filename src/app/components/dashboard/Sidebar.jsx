@@ -49,6 +49,7 @@ const Sidebar = () => {
       { icon: BiFoodMenu, label: "Total recipes", link: "/dashboard/admin/totalRecipe" },
       { icon: BiFoodMenu, label: "Premium members", link: "/dashboard/admin/premiumMembers" },
       { icon: BiError, label: "Total reports", link: "/dashboard/admin/totalreports" },
+      { icon: BiMoney, label: "Transactions", link: "/dashboard/admin/transactions" },
       { icon: BiHomeCircle, label: "Profile", link: "/dashboard/admin/transaction" },
     ],
   };

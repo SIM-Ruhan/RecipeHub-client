@@ -66,3 +66,17 @@ export const getAdminStats = async () => {
   const res = await fetch(`${baseURL}/api/admin/stats`, { cache: "no-store" });
   return res.json();
 };
+
+export const confirmPurchase = async (payload) => {
+  const res = await fetch(`${baseURL}/api/purchases`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return res.json();
+};
+
+export const getAdminTransactions = async () => {
+  const res = await fetch(`${baseURL}/api/admin/transactions`, { cache: "no-store" });
+  return res.json();
+};

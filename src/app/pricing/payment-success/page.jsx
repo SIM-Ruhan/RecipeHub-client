@@ -1,8 +1,8 @@
-import { createSubscription } from '@/lib/actions/subscriptions'
 import { stripe } from '@/lib/stripe'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { CheckCircle2, ArrowRight, Package } from "lucide-react";
+import { confirmPurchase } from '@/lib/api';
 
 export default async function Success({ searchParams }) {
   const { session_id } = await searchParams
@@ -13,33 +13,33 @@ export default async function Success({ searchParams }) {
   const {
     id: stripeSessionId,
     status,
-    payment_status,
-    amount_total,
-    customer_details,
+    customer_details: { email: customerEmail },
     metadata
-  } = await stripe.checkout.sessions.retrieve(session_id)
-
-  const customerEmail = customer_details?.email;
+  } = await stripe.checkout.sessions.retrieve(session_id, {
+    expand: ['line_items', 'payment_intent']
+  })
 
   if (status === 'open') {
     return redirect('/')
   }
 
   if (status === 'complete') {
-    const subsInfo = {
-      email: customerEmail,
-      planId: metadata?.planId,
-      price: (amount_total || 0) / 100, // Stripe amounts are in cents
-      stripeSessionId,
-      status: payment_status === 'paid' ? 'paid' : (payment_status || 'unknown'),
-    }
+    let purchase = null;
 
-    let result = null;
     try {
-      result = await createSubscription(subsInfo);
+      const confirmResult = await confirmPurchase({
+        sessionId: stripeSessionId,
+        recipeId: metadata?.productId,
+        userId: metadata?.userId,
+        userEmail: customerEmail || metadata?.userEmail,
+        price: metadata?.price,
+        title: metadata?.title,
+      });
+      purchase = confirmResult?.purchase || null;
     } catch (error) {
-      console.error("Failed to record subscription:", error);
-      // Don't block the page — Stripe already charged the customer successfully.
+      console.error("Failed to confirm purchase:", error);
+      // Don't block the success page on this — payment already succeeded on Stripe's side.
+      // Worth adding monitoring/alerting here since this means a paid purchase didn't get recorded.
     }
 
     return (
@@ -54,21 +54,21 @@ export default async function Success({ searchParams }) {
             {/* Heading */}
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Payment Successful!</h1>
             <p className="text-gray-600 mb-8">
-              Thank you for upgrading your plan. Your new benefits are now active.
+              Thank you for your purchase. We have received your payment and your order is being processed.
             </p>
 
             {/* Order Details Summary */}
             <div className="bg-gray-50 rounded-lg p-4 mb-8 text-left border border-gray-100">
               <div className="flex justify-between py-2 border-b border-gray-200">
-                <span className="text-sm text-gray-500">Plan</span>
-                <span className="text-sm font-semibold text-gray-900 capitalize">
-                  {metadata?.planId?.replace('seller_', '') || "—"}
+                <span className="text-sm text-gray-500">Recipe</span>
+                <span className="text-sm font-semibold text-gray-900">
+                  {purchase?.recipeName || metadata?.title || "—"}
                 </span>
               </div>
               <div className="flex justify-between py-2">
                 <span className="text-sm text-gray-500">Amount Paid</span>
                 <span className="text-sm font-semibold text-gray-900">
-                  ${subsInfo.price.toFixed(2)}
+                  ${purchase?.price ?? metadata?.price ?? "—"}
                 </span>
               </div>
             </div>
@@ -76,11 +76,11 @@ export default async function Success({ searchParams }) {
             {/* Actions */}
             <div className="space-y-3">
               <Link
-                href="/dashboard/seller"
+                href="/browse"
                 className="flex items-center justify-center w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
               >
                 <Package className="mr-2 h-5 w-5" />
-                Go to Dashboard
+                Order more!
               </Link>
               <Link
                 href="/"

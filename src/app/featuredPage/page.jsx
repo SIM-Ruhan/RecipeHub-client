@@ -6,14 +6,12 @@ import { TbChefHat, TbTagStarred } from 'react-icons/tb';
 
 const getFeaturedRecipes = async () => {
   try {
-    // Calling your Express backend route
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/recipes`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/recipes?limit=100`, {
       cache: "no-store",
     });
     if (!res.ok) return [];
-    
-    const allRecipes = await res.json();
-    // Filter down to only items set to featured from your Total Recipes table
+    const data = await res.json();
+    const allRecipes = data?.recipes || [];
     return allRecipes.filter(recipe => recipe.isFeatured === true);
   } catch (error) {
     console.error("Failed fetching featured recipes:", error);

@@ -38,7 +38,7 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen py-20 px-4">
       <div className="max-w-6xl mx-auto text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-6">
           Choose the plan that <span className="text-emerald-600">fits your kitchen</span>
         </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
