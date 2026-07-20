@@ -8,7 +8,7 @@ export default function FavoritesPage() {
   const userId = session?.user?.id;
   const [recipes, setRecipes] = useState([]);
   const [fetching, setFetching] = useState(false);
-  const [removingId, setRemovingId] = useState(null); // track in-flight removal
+  const [removingId, setRemovingId] = useState(null); 
 
   useEffect(() => {
     if (isPending || !userId) return;

@@ -121,6 +121,7 @@ export default function SellerDashboardHomepage() {
     { title: "Total Engagement", value: formatCount(sellerStats.totalEngagement),     icon: BiHeart, color: "text-rose-600", bg: "bg-rose-100" },
   ];
 
+
   const containerVariants = {
     hidden: { opacity: 0 },
     show:   { opacity: 1, transition: { staggerChildren: 0.1 } },

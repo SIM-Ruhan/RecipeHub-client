@@ -180,14 +180,14 @@ const user = session?.user;
           <div className="px-2 pt-2 pb-4 space-y-1 sm:px-3">
             <Link
               href="/"
-              className={`block px-3 py-2 rounded-md text-base ${isActive('/') ? 'text-emerald-600 font-bold bg-emerald-50' : 'font-medium  hover:text-emerald-600 hover:bg-emerald-50'}`}
+              className={`block px-3 py-2 rounded-md text-base ${isActive('/') ? 'text-emerald-600 font-bold bg-emerald-50' : 'font-medium text-white  hover:text-emerald-600 hover:bg-emerald-50'}`}
               onClick={() => setIsOpen(false)}
             >
               Home
             </Link>
             <Link
               href="/browse"
-              className={`block px-3 py-2 rounded-md text-base ${isActive('/browse') ? 'text-emerald-600 font-bold bg-emerald-50' : 'font-medium hover:text-emerald-600 hover:bg-emerald-50'}`}
+              className={`block px-3 py-2 rounded-md text-base ${isActive('/browse') ? 'text-emerald-600 font-bold bg-emerald-50' : 'font-medium text-white hover:text-emerald-600 hover:bg-emerald-50'}`}
               onClick={() => setIsOpen(false)}
             >
               Browse Recipes
@@ -196,14 +196,14 @@ const user = session?.user;
             {session && (
               <Link
                 href="/dashboard"
-                className={`block px-3 py-2 rounded-md text-base ${isActive('/dashboard') ? 'text-emerald-600 font-bold bg-emerald-50' : 'font-medium hover:text-emerald-600 hover:bg-emerald-50'}`}
+                className={`block px-3 py-2 rounded-md text-base ${isActive('/dashboard') ? 'text-emerald-600 font-bold bg-emerald-50' : 'font-medium text-white hover:text-emerald-600 hover:bg-emerald-50'}`}
                 onClick={() => setIsOpen(false)}
               >
                 Dashboard
               </Link>
             )}
             {/* Start here */}
-<div  className={` flex gap-2 px-3 py-2 rounded-md text-base ${isActive('/dashboard') ? 'text-emerald-600 font-bold bg-emerald-50' : 'font-medium hover:text-emerald-600 hover:bg-emerald-50'}`}>
+<div  className={` flex gap-2 px-3 py-2 rounded-md text-base ${isActive('/dashboard') ? 'text-emerald-600 font-bold bg-emerald-50' : 'font-medium text-white hover:text-emerald-600 hover:bg-emerald-50'}`}>
   <div>
      <h1>Color Mode: </h1>
   </div>
@@ -255,14 +255,14 @@ const user = session?.user;
                     />
                   </div>
                   <div className="ml-3">
-                    <div className="text-base font-medium">{session.user.name}</div>
+                    <div className="text-white font-medium">{session.user.name}</div>
                     <div className="text-sm font-medium text-gray-500">{session.user.email}</div>
                   </div>
                 </div>
                 <div className="mt-3 space-y-1 px-2">
                   <Link
                     href={`/dashboard/${user?.role}/transaction`}
-                    className="block px-3 py-2 rounded-md text-base font-medium hover:text-emerald-600 hover:bg-emerald-50"
+                    className="block text-white px-3 py-2 rounded-md text-base font-medium hover:text-emerald-600 hover:bg-emerald-50"
                     onClick={() => setIsOpen(false)}
                   >
                     Profile
