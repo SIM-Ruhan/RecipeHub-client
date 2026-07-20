@@ -26,18 +26,3 @@ export const CreateRecipe = async (newRecipeData) => {
 
 
 
-// Change to "use server" if you want this to act as a secure server-side bridge
-// const res = await fetch(`${baseURL}/api/recipes`, {
-//   method: "POST",
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-//   body: JSON.stringify(newRecipeData),
-// });
-
-// const text = await res.text();
-
-// // console.log("Status:", res.status);
-// // console.log("Response:", text);
-
-// return;

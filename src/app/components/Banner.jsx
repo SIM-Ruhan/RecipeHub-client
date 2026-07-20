@@ -2,6 +2,8 @@ import Link from 'next/link';
 import React from 'react';
 import { HiOutlineArrowLongRight } from 'react-icons/hi2';
 
+
+
 const HeroBanner = () => {
   return (
     <section className="relative overflow-hidden">
@@ -32,19 +34,39 @@ const HeroBanner = () => {
             {/* CTA Button */}
             <div className="pt-4 flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
               <Link
-                href="/browse"
-                className="group inline-flex items-center justify-center px-6 py-3.5 border border-transparent text-base font-semibold rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 shadow-md hover:shadow-lg transition-all duration-200 gap-2"
-              >
-                Explore Recipes
-                <HiOutlineArrowLongRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
+  href="/browse"
+  className="group relative inline-flex items-center justify-center overflow-hidden rounded-xl bg-gradient-to-r from-emerald-500 via-emerald-600 to-green-600 px-7 py-3.5 font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-emerald-500/30"
+>
+  {/* Shine Effect */}
+  <span className="absolute inset-0 -translate-x-full skew-x-12 bg-white/20 transition-transform duration-700 group-hover:translate-x-[250%]" />
+
+  {/* Text */}
+  <span className="relative flex items-center gap-3">
+    <span>Explore Recipes</span>
+
+    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 transition-all duration-300 group-hover:bg-white group-hover:text-emerald-600">
+      <HiOutlineArrowLongRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+    </span>
+  </span>
+</Link>
               
               <Link
-                href="/registration"
-                className="inline-flex items-center justify-center px-6 py-3.5 border border-gray-300 text-base font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200 shadow-sm"
-              >
-                Join Community
-              </Link>
+  href="/pricing"
+  className="group relative inline-flex items-center justify-center overflow-hidden rounded-xl bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 px-7 py-3.5 font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-500/30"
+>
+  <span className="absolute inset-0 bg-white/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
+
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-12"
+    fill="currentColor"
+    viewBox="0 0 20 20"
+  >
+    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.719c-.783-.57-.38-1.81.588-1.81H7.03a1 1 0 00.95-.69l1.07-3.292z" />
+  </svg>
+
+  <span className="relative z-10">Become a Premium Member</span>
+</Link>
             </div>
           </div>
 

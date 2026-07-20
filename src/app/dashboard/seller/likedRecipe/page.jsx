@@ -17,10 +17,12 @@ export default function LikedRecipesPage() {
     if (isPending) return;
 
     // If no logged in user
-    if (!userId) {
+   if (!userId) {
+    queueMicrotask(() => {
       setLoading(false);
-      return;
-    }
+    });
+    return;
+  }
 
     const fetchLikedRecipes = async () => {
       try {
@@ -63,7 +65,7 @@ export default function LikedRecipesPage() {
 
   return (
     <div className="">
-        <h1 className="text-4xl font-bold text-gray-700 py-5">Total Liked Recipes({recipes.length})</h1>
+        <h1 className="text-4xl font-bold py-5">Total Liked Recipes({recipes.length})</h1>
     <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
       {recipes.map((recipe) => (
         <RecipeCard

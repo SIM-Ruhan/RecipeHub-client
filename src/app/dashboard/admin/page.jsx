@@ -13,9 +13,9 @@ const STAT_CARDS = [
 ];
 
 const QUICK_ACTIONS = [
-  { label: "Manage Users",   emoji: "👤", href: "/dashboard/admin/users" },
-  { label: "Manage Recipes", emoji: "📄", href: "/dashboard/admin/recipes" },
-  { label: "Review Reports", emoji: "🛡️", href: "/dashboard/admin/reports" },
+  { label: "Manage Users",   emoji: "👤", href: "/dashboard/admin/totalUsers" },
+  { label: "Manage Recipes", emoji: "📄", href: "/dashboard/admin/totalRecipe" },
+  { label: "Review Reports", emoji: "🛡️", href: "/dashboard/admin/totalreports" },
   { label: "Transactions",   emoji: "💳", href: "/dashboard/admin/transactions" },
 ];
 
