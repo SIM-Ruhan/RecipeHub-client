@@ -140,7 +140,7 @@ console.log("Target",targetId)
                   </td>
                 </tr>
               ) : recipes.length > 0 ? (
-                recipes.slice(0, 5).map((recipe, index) => {
+                recipes.map((recipe, index) => {
                   const safeId = typeof recipe._id === 'object' && recipe._id?.$oid ? recipe._id.$oid : recipe._id;
                   
                   return (
