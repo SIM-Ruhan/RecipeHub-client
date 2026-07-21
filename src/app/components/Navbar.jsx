@@ -227,7 +227,7 @@ const user = session?.user;
               <>
                 <Link
                   href="/login"
-                  className={`block px-3 py-2 rounded-md text-base ${isActive('/login') ? 'text-emerald-600 font-bold bg-emerald-50' : 'font-medium hover:text-emerald-600 hover:bg-emerald-50'}`}
+                  className={`block px-3 py-2 rounded-md text-white ${isActive('/login') ? 'text-emerald-600 font-bold bg-emerald-50' : 'font-medium hover:text-emerald-600 hover:bg-emerald-50'}`}
                   onClick={() => setIsOpen(false)}
                 >
                   Login
