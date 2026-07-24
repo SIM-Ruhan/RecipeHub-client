@@ -129,7 +129,7 @@ function LogInForm() {
 
         <div className="text-center text-sm text-gray-500">OR</div>
 
-        <Button onClick={handleGoogleLogin} variant="outline" className="w-full bg-amber-50">
+        <Button type="button" onClick={handleGoogleLogin} variant="outline" className="w-full bg-amber-50">
           <GrGoogle/> Continue with Google
         </Button>
 

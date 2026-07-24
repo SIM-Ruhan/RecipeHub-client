@@ -27,7 +27,6 @@ function SignUpForm() {
 
   const {
     register,
-    handleSubmit,
     formState: { errors },
   } = useForm();
 
